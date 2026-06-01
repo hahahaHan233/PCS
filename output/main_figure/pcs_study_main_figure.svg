@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1150" viewBox="0 0 1800 1150">
+  <defs>
+    <style>
+      .bg { fill: #f7f8fb; }
+      .title { font-family: Arial, Helvetica, sans-serif; font-size: 44px; font-weight: 700; fill: #1f2937; }
+      .subtitle { font-family: Arial, Helvetica, sans-serif; font-size: 24px; fill: #4b5563; }
+      .section-title { font-family: Arial, Helvetica, sans-serif; font-size: 25px; font-weight: 700; fill: #111827; }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 21px; fill: #1f2937; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #374151; }
+      .tiny { font-family: Arial, Helvetica, sans-serif; font-size: 16px; fill: #4b5563; }
+      .caption { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #6b7280; }
+      .card { fill: #ffffff; stroke: #d8dee9; stroke-width: 2; rx: 10; }
+      .data { fill: #e8f3ff; stroke: #8bbce8; }
+      .prep { fill: #eef8f1; stroke: #8bc99a; }
+      .stat { fill: #fff4df; stroke: #efbd62; }
+      .ml { fill: #f0edff; stroke: #a697e8; }
+      .explain { fill: #ffeef0; stroke: #e99aa4; }
+      .clinical { fill: #e9f8f7; stroke: #79c8c2; }
+      .dark { fill: #233044; }
+      .muted-line { stroke: #aeb7c4; stroke-width: 2.4; fill: none; }
+      .arrow { stroke: #4b5563; stroke-width: 3.2; fill: none; marker-end: url(#arrowhead); }
+      .soft-arrow { stroke: #7b8494; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead-soft); }
+      .divider { stroke: #d8dee9; stroke-width: 2; stroke-dasharray: 8 8; }
+      .pill { fill: #ffffff; stroke: #c8d1df; stroke-width: 1.6; rx: 16; }
+      .pcs { fill: #dc4e5d; }
+      .no-pcs { fill: #4979b8; }
+      .low { fill: #47a36d; }
+      .mid { fill: #e0a028; }
+      .high { fill: #d24b56; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#4b5563"/>
+    </marker>
+    <marker id="arrowhead-soft" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#7b8494"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1800" height="1150"/>
+
+  <text class="title" x="90" y="82">Explainable machine-learning workflow for PCS risk prediction</text>
+  <text class="subtitle" x="92" y="122">Post-cholecystectomy syndrome prediction, interpretation, and clinical risk stratification</text>
+
+  <rect class="card data" x="90" y="175" width="335" height="250"/>
+  <text class="section-title" x="120" y="220">Clinical cohort</text>
+  <text class="label" x="120" y="265">Patients undergoing</text>
+  <text class="label" x="120" y="293">cholecystectomy</text>
+  <rect class="pill" x="120" y="326" width="105" height="36"/>
+  <text class="small" x="145" y="351">N = 311</text>
+  <rect class="pill" x="237" y="326" width="145" height="36"/>
+  <text class="small" x="257" y="351">PCS = 70</text>
+  <rect class="pill" x="120" y="373" width="194" height="36"/>
+  <text class="small" x="140" y="398">No PCS = 241</text>
+
+  <rect class="card data" x="90" y="462" width="335" height="390"/>
+  <text class="section-title" x="120" y="507">Predictor domains</text>
+  <circle cx="132" cy="553" r="7" fill="#4979b8"/>
+  <text class="small" x="150" y="559">Demographics</text>
+  <circle cx="132" cy="595" r="7" fill="#4979b8"/>
+  <text class="small" x="150" y="601">Lifestyle factors</text>
+  <circle cx="132" cy="637" r="7" fill="#4979b8"/>
+  <text class="small" x="150" y="643">Preoperative symptoms</text>
+  <circle cx="132" cy="679" r="7" fill="#4979b8"/>
+  <text class="small" x="150" y="685">Medical history</text>
+  <circle cx="132" cy="721" r="7" fill="#4979b8"/>
+  <text class="small" x="150" y="727">Imaging features</text>
+  <circle cx="132" cy="763" r="7" fill="#4979b8"/>
+  <text class="small" x="150" y="769">Laboratory markers</text>
+  <text class="tiny" x="120" y="813">ALT, AST, ALP, GGT, bilirubin,</text>
+  <text class="tiny" x="120" y="837">bile acid, lipids, AFP, CA19-9</text>
+
+  <line class="arrow" x1="425" y1="303" x2="514" y2="303"/>
+  <line class="arrow" x1="425" y1="657" x2="514" y2="657"/>
+
+  <rect class="card prep" x="515" y="175" width="345" height="250"/>
+  <text class="section-title" x="545" y="220">Data preparation</text>
+  <text class="small" x="545" y="265">Data dictionary and coding</text>
+  <text class="small" x="545" y="305">Missing-value assessment</text>
+  <text class="small" x="545" y="345">Outlier and range checks</text>
+  <text class="small" x="545" y="385">Leakage-free preprocessing</text>
+
+  <rect class="card prep" x="515" y="462" width="345" height="390"/>
+  <text class="section-title" x="545" y="507">Outcome definition</text>
+  <text class="label" x="545" y="555">PCS occurrence</text>
+  <text class="small" x="545" y="592">Binary endpoint for model</text>
+  <text class="small" x="545" y="622">development and validation</text>
+  <line class="muted-line" x1="545" y1="660" x2="830" y2="660"/>
+  <text class="tiny" x="545" y="700">Post-outcome fields excluded:</text>
+  <text class="tiny" x="545" y="731">PCS onset time</text>
+  <text class="tiny" x="545" y="761">PCS symptom type</text>
+
+  <line class="arrow" x1="860" y1="303" x2="950" y2="303"/>
+  <line class="arrow" x1="860" y1="657" x2="950" y2="657"/>
+
+  <rect class="card stat" x="950" y="175" width="345" height="250"/>
+  <text class="section-title" x="980" y="220">Statistical analysis</text>
+  <text class="small" x="980" y="265">Baseline table</text>
+  <text class="small" x="980" y="305">PCS vs. non-PCS comparison</text>
+  <text class="small" x="980" y="345">Univariable logistic regression</text>
+  <text class="small" x="980" y="385">Multivariable logistic regression</text>
+
+  <rect class="card ml" x="950" y="462" width="345" height="390"/>
+  <text class="section-title" x="980" y="507">Prediction modeling</text>
+  <text class="small" x="980" y="553">Stratified train-test split</text>
+  <text class="small" x="980" y="594">Logistic regression baseline</text>
+  <text class="small" x="980" y="635">Random Forest</text>
+  <text class="small" x="980" y="676">XGBoost / LightGBM</text>
+  <text class="small" x="980" y="717">Internal validation</text>
+  <line class="muted-line" x1="980" y1="755" x2="1265" y2="755"/>
+  <text class="tiny" x="980" y="795">AUC, sensitivity, specificity,</text>
+  <text class="tiny" x="980" y="823">F1-score, calibration, DCA</text>
+
+  <line class="soft-arrow" x1="1122" y1="425" x2="1122" y2="462"/>
+
+  <line class="arrow" x1="1295" y1="303" x2="1383" y2="303"/>
+  <line class="arrow" x1="1295" y1="657" x2="1383" y2="657"/>
+
+  <rect class="card explain" x="1385" y="175" width="325" height="250"/>
+  <text class="section-title" x="1415" y="220">Key determinants</text>
+  <text class="small" x="1415" y="265">Odds ratios and 95% CI</text>
+  <text class="small" x="1415" y="305">Clinical interpretation</text>
+  <text class="small" x="1415" y="345">Candidate risk factors</text>
+  <text class="tiny" x="1415" y="389">GGT, ALT, ALP, AST, CA19-9,</text>
+  <text class="tiny" x="1415" y="414">bilirubin, symptoms</text>
+
+  <rect class="card explain" x="1385" y="462" width="325" height="390"/>
+  <text class="section-title" x="1415" y="507">Explainability</text>
+  <text class="small" x="1415" y="553">SHAP summary plot</text>
+  <text class="small" x="1415" y="594">Feature importance</text>
+  <text class="small" x="1415" y="635">Dependence plots</text>
+  <text class="small" x="1415" y="676">Individual explanations</text>
+  <line class="muted-line" x1="1415" y1="719" x2="1680" y2="719"/>
+  <text class="tiny" x="1415" y="761">Translate model behavior into</text>
+  <text class="tiny" x="1415" y="789">clinically understandable risk</text>
+  <text class="tiny" x="1415" y="817">signals.</text>
+
+  <line class="soft-arrow" x1="1548" y1="425" x2="1548" y2="462"/>
+
+  <line class="divider" x1="90" y1="900" x2="1710" y2="900"/>
+
+  <rect class="card clinical" x="265" y="950" width="1270" height="130"/>
+  <text class="section-title" x="305" y="1000">Clinical translation: model-derived PCS risk stratification</text>
+
+  <rect class="pill" x="306" y="1028" width="240" height="38"/>
+  <circle cx="330" cy="1047" r="9" class="low"/>
+  <text class="small" x="350" y="1054">Low risk: routine follow-up</text>
+
+  <rect class="pill" x="585" y="1028" width="330" height="38"/>
+  <circle cx="609" cy="1047" r="9" class="mid"/>
+  <text class="small" x="629" y="1054">Intermediate risk: enhanced monitoring</text>
+
+  <rect class="pill" x="957" y="1028" width="350" height="38"/>
+  <circle cx="981" cy="1047" r="9" class="high"/>
+  <text class="small" x="1001" y="1054">High risk: targeted follow-up and intervention</text>
+
+  <line class="soft-arrow" x1="1548" y1="852" x2="1395" y2="949"/>
+  <line class="soft-arrow" x1="1122" y1="852" x2="1122" y2="949"/>
+  <line class="soft-arrow" x1="1548" y1="852" x2="1122" y2="949"/>
+
+  <text class="caption" x="90" y="1120">Figure. End-to-end workflow for developing an explainable PCS risk prediction model using clinical, imaging, symptom, and laboratory data.</text>
+</svg>

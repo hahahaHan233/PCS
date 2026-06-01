@@ -1,0 +1,183 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
+
+\title{\textbf{Explainable Machine-Learning Pipeline for Post-Cholecystectomy Syndrome Risk Prediction: A Demonstration Report}}
+\author{PCS Study Group}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This demo manuscript summarizes an end-to-end analytical workflow for predicting post-cholecystectomy syndrome (PCS) using structured clinical data. The pipeline includes data preprocessing, multi-algorithm model development, stratified five-fold cross-validation, model evaluation, SHAP-based interpretation, and an exploratory PCS symptom-category prediction task. The goal is to provide a compact Overleaf-ready template for presenting the current project outputs rather than a fully developed journal manuscript.
+\end{abstract}
+
+\section{Background}
+
+Post-cholecystectomy syndrome (PCS) may occur after cholecystectomy and can manifest as abdominal pain, dyspepsia, constipation, or other gastrointestinal symptoms. Early identification of high-risk patients may support individualized follow-up and postoperative counseling. Machine-learning methods are suitable for integrating heterogeneous clinical, imaging, symptom, and laboratory variables, while explainable artificial intelligence can improve model transparency in clinical research settings \citep{lundberg2017shap,lundberg2020treeshap,tripodai2024}.
+
+\section{Data and Study Design}
+
+The dataset included 311 patients. The binary outcome was PCS occurrence, with 70 PCS-positive cases and 241 PCS-negative cases. Candidate predictors included demographics, lifestyle factors, preoperative symptoms, medical history, imaging findings, and laboratory markers. Identifier variables and post-outcome fields were excluded from the binary PCS prediction model.
+
+\section{Analytical Pipeline}
+
+Numeric variables were imputed using the median and standardized. Categorical variables were imputed using the most frequent category and one-hot encoded. Models were evaluated using stratified five-fold cross-validation. Out-of-fold predictions were used for receiver operating characteristic (ROC) curves, calibration curves, decision curve analysis, and summary metrics.
+
+\section{Model Development and Evaluation}
+
+We compared logistic regression, random forest, gradient boosting, support vector machine, Gaussian naive Bayes, and XGBoost models. Table~\ref{tab:model_performance} summarizes the current cross-validated performance. Random forest achieved the highest out-of-fold area under the ROC curve (AUC).
+
+\begin{table}[H]
+\centering
+\caption{Cross-validated performance for PCS occurrence prediction.}
+\label{tab:model_performance}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+Model & OOF AUC & OOF AP & Brier & Sensitivity & Specificity & F1 \\
+\midrule
+Random Forest & 0.917 & 0.842 & 0.088 & 0.714 & 0.946 & 0.747 \\
+Gradient Boosting & 0.895 & 0.827 & 0.081 & 0.729 & 0.950 & 0.768 \\
+XGBoost & 0.889 & 0.799 & 0.091 & 0.757 & 0.930 & 0.756 \\
+SVM & 0.856 & 0.799 & 0.089 & 0.657 & 0.967 & 0.741 \\
+Gaussian NB & 0.853 & 0.716 & 0.459 & 0.900 & 0.398 & 0.462 \\
+Logistic Regression & 0.849 & 0.817 & 0.110 & 0.743 & 0.900 & 0.713 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\linewidth]{figures/fig2_roc_curve.png}
+\caption{Cross-validated ROC curves based on out-of-fold predictions.}
+\label{fig:roc}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig3_calibration_curve.png}
+  \caption{Calibration curves}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.48\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/fig4_dca_curve.png}
+  \caption{Decision curve analysis}
+\end{subfigure}
+\caption{Clinical model assessment beyond discrimination.}
+\label{fig:calibration_dca}
+\end{figure}
+
+\section{SHAP-Based Interpretation}
+
+Random forest was selected for SHAP analysis because it achieved the best out-of-fold AUC. The fitted model mainly relied on hepatobiliary laboratory markers and symptom-related variables. The leading variables by aggregated mean absolute SHAP value were GGT, ALT, AST, ALP, CA19-9, total bilirubin, symptom duration, total bile acid, pain frequency, and age.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{figures/fig5_shap_summary.png}
+\caption{SHAP summary plot for the final random forest model.}
+\label{fig:shap_summary}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\linewidth]{figures/fig6_shap_variable_importance.png}
+\caption{Aggregated SHAP importance by original clinical variable.}
+\label{fig:shap_importance}
+\end{figure}
+
+\section{Exploratory PCS Symptom-Category Task}
+
+The original free-text field for PCS symptom type was mapped into structured labels. PCS-negative patients were assigned to \texttt{no\_pcs}. PCS-positive symptom text was grouped into pain, constipation, and gastrointestinal dysfunction/dyspepsia phenotypes. This task was treated as an exploratory secondary analysis because symptom subtype sample sizes were small.
+
+\begin{table}[H]
+\centering
+\caption{Constructed PCS symptom occurrence categories.}
+\label{tab:symptom_classes}
+\small
+\begin{tabular}{lcc}
+\toprule
+Category & Description & Count \\
+\midrule
+\texttt{no\_pcs} & No PCS & 241 \\
+\texttt{pain} & Abdominal pain phenotype & 24 \\
+\texttt{constipation} & Constipation phenotype & 19 \\
+\texttt{gi\_dysfunction\_dyspepsia} & GI dysfunction/dyspepsia phenotype & 26 \\
+\texttt{pcs\_unknown} & PCS-positive with missing symptom text & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Exploratory symptom-category prediction performance.}
+\label{tab:symptom_model_performance}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Model & Accuracy & Balanced accuracy & Macro F1 & Macro OVR AUC \\
+\midrule
+Gradient Boosting & 0.810 & 0.435 & 0.452 & 0.844 \\
+XGBoost & 0.810 & 0.422 & 0.439 & 0.848 \\
+SVM & 0.819 & 0.391 & 0.413 & 0.804 \\
+Random Forest & 0.797 & 0.391 & 0.381 & 0.849 \\
+Multinomial Logistic & 0.677 & 0.367 & 0.349 & 0.673 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.32\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/figS1_symptom_distribution.png}
+  \caption{Class distribution}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/figS2_symptom_confusion_matrix.png}
+  \caption{Confusion matrix}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.32\linewidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/figS3_symptom_ovr_roc.png}
+  \caption{One-vs-rest ROC}
+\end{subfigure}
+\caption{Exploratory PCS symptom-category prediction results.}
+\label{fig:symptom_task}
+\end{figure}
+
+\section{Current Interpretation}
+
+The current results suggest that machine-learning models can provide strong internal discrimination for PCS occurrence, with random forest achieving the best out-of-fold AUC. SHAP analysis indicated that laboratory markers of hepatobiliary disturbance contributed most prominently to model predictions. The symptom-category task provides an initial framework for modeling PCS heterogeneity, but the class sizes are limited and the results should be interpreted as exploratory.
+
+\section{Limitations}
+
+This demo uses internal cross-validation only. External validation, prospective assessment, formal hyperparameter tuning, complete baseline regression analysis, and clinically defined risk thresholds remain necessary before clinical deployment.
+
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+\end{document}

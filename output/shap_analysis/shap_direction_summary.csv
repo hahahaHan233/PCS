@@ -1,0 +1,21 @@
+﻿feature,direction_hint,spearman_rho_feature_vs_shap,p_value,original_variable_guess
+ggt,higher value increases predicted PCS risk,0.7942557891365637,7.764019411823816e-69,ggt
+alt,higher value increases predicted PCS risk,0.45449462571298516,2.939987279160471e-17,alt
+ast,higher value increases predicted PCS risk,0.5420038218300105,3.8165464005164133e-25,ast
+alp,higher value increases predicted PCS risk,0.8009886304290901,8.040540424713082e-71,alp
+ca199,higher value increases predicted PCS risk,0.8024953125210021,2.822689201476519e-71,ca199
+total_bilirubin,higher value increases predicted PCS risk,0.5816234286900422,1.5235660515895918e-29,total_bilirubin
+total_bile_acid,higher value increases predicted PCS risk,0.636259378412752,1.080031806930208e-36,total_bile_acid
+symptom_duration_very_short,higher value increases predicted PCS risk,0.8513600271222732,1.4068955721572012e-88,symptom_duration_very_short
+pain_frequency_daily,higher value increases predicted PCS risk,0.861716792957819,4.691316483188121e-93,pain_frequency_daily
+age,higher value increases predicted PCS risk,0.6103872162660908,3.910621949394747e-33,age
+alpha_fetoprotein,higher value decreases predicted PCS risk,-0.9304556454892456,8.94543371837847e-137,alpha_fetoprotein
+bmi,higher value decreases predicted PCS risk,-0.8557890531430057,1.8907330664711971e-90,bmi
+total_cholesterol,higher value decreases predicted PCS risk,-0.6025228093054297,4.0757527934983593e-32,total_cholesterol
+max_stone_diameter_mm,higher value increases predicted PCS risk,0.6052429894049585,1.8251953464970075e-32,max_stone_diameter_mm
+weight_kg,higher value decreases predicted PCS risk,-0.643874637754836,8.32185206442208e-38,weight_kg
+triglyceride,higher value decreases predicted PCS risk,-0.5931845536475127,6.065941366986661e-31,triglyceride
+occupation_unemployed,higher value increases predicted PCS risk,0.865810482474817,6.313599026608719e-95,occupation_unemployed
+stone_location_gallbladder_body,higher value decreases predicted PCS risk,-0.7340952129238529,7.024743539356908e-54,stone_location_gallbladder_body
+pain_frequency_monthly,higher value decreases predicted PCS risk,-0.6919871052600286,1.2196731061673556e-45,pain_frequency_monthly
+common_bile_duct_diameter_mm,higher value increases predicted PCS risk,0.8279680316768796,1.2993337921789381e-79,common_bile_duct_diameter_mm

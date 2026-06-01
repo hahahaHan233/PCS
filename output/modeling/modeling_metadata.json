@@ -1,0 +1,19 @@
+{
+  "dataset": "C:\\Users\\Han\\Desktop\\PCS\\dataset.csv",
+  "n_rows": 311,
+  "n_features": 36,
+  "outcome": "pcs",
+  "pcs_positive": 70,
+  "pcs_negative": 241,
+  "pcs_prevalence": 0.22508038585209003,
+  "cv": "5-fold stratified cross-validation",
+  "random_state": 42,
+  "models": [
+    "Logistic Regression",
+    "Random Forest",
+    "Gradient Boosting",
+    "SVM",
+    "Gaussian NB",
+    "XGBoost"
+  ]
+}

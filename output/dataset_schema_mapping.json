@@ -1,0 +1,330 @@
+[
+  {
+    "source_order": 1,
+    "original_name": "姓名",
+    "english_name": "patient_name",
+    "type": "identifier",
+    "role": "identifier",
+    "included_in_dataset_csv": false
+  },
+  {
+    "source_order": 2,
+    "original_name": "住院号",
+    "english_name": "hospital_id",
+    "type": "identifier",
+    "role": "identifier",
+    "included_in_dataset_csv": false
+  },
+  {
+    "source_order": 3,
+    "original_name": "年龄",
+    "english_name": "age",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 4,
+    "original_name": "性别",
+    "english_name": "sex",
+    "type": "categorical",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 5,
+    "original_name": "职业",
+    "english_name": "occupation",
+    "type": "categorical",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 6,
+    "original_name": "身高",
+    "english_name": "height_cm",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 7,
+    "original_name": "体重",
+    "english_name": "weight_kg",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 8,
+    "original_name": "BMI",
+    "english_name": "bmi",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 9,
+    "original_name": "教育水平",
+    "english_name": "education_level",
+    "type": "categorical",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 10,
+    "original_name": "是否吸烟",
+    "english_name": "smoking",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 11,
+    "original_name": "是否饮酒",
+    "english_name": "alcohol_use",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 12,
+    "original_name": "症状持续时间",
+    "english_name": "symptom_duration",
+    "type": "ordinal_categorical",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 13,
+    "original_name": "有否腹痛",
+    "english_name": "abdominal_pain",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 14,
+    "original_name": "疼痛频率",
+    "english_name": "pain_frequency",
+    "type": "ordinal_categorical",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 15,
+    "original_name": "是否有放射痛",
+    "english_name": "radiating_pain",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 16,
+    "original_name": "是否与进食有关",
+    "english_name": "meal_related_pain",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 17,
+    "original_name": "是否合并高血压",
+    "english_name": "hypertension",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 18,
+    "original_name": "是否合并高血脂",
+    "english_name": "hyperlipidemia",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 19,
+    "original_name": "是否合并糖尿病",
+    "english_name": "diabetes",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 20,
+    "original_name": "是否焦虑/抑郁",
+    "english_name": "anxiety_depression",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 21,
+    "original_name": "是否既往腹部手术史",
+    "english_name": "prior_abdominal_surgery",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 22,
+    "original_name": "胆囊壁是否增厚",
+    "english_name": "gallbladder_wall_thickening",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 23,
+    "original_name": "最大结石直径",
+    "english_name": "max_stone_diameter_mm",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 24,
+    "original_name": "结石数量",
+    "english_name": "stone_number",
+    "type": "categorical",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 25,
+    "original_name": "结石位置",
+    "english_name": "stone_location",
+    "type": "categorical",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 26,
+    "original_name": "胆总管直径",
+    "english_name": "common_bile_duct_diameter_mm",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 27,
+    "original_name": "是否有脂肪肝",
+    "english_name": "fatty_liver",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 28,
+    "original_name": "胆囊是否萎缩",
+    "english_name": "gallbladder_atrophy",
+    "type": "binary",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 29,
+    "original_name": "谷丙转氨酶",
+    "english_name": "alt",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 30,
+    "original_name": "谷草转氨酶",
+    "english_name": "ast",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 31,
+    "original_name": "碱性磷酸酶",
+    "english_name": "alp",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 32,
+    "original_name": "谷氨酰转肽酶",
+    "english_name": "ggt",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 33,
+    "original_name": "总胆红素",
+    "english_name": "total_bilirubin",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 34,
+    "original_name": "总胆汁酸",
+    "english_name": "total_bile_acid",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 35,
+    "original_name": "总胆固醇",
+    "english_name": "total_cholesterol",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 36,
+    "original_name": "甘油三酯",
+    "english_name": "triglyceride",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 37,
+    "original_name": "甲胎蛋白",
+    "english_name": "alpha_fetoprotein",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 38,
+    "original_name": "CA199",
+    "english_name": "ca199",
+    "type": "numeric",
+    "role": "predictor",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 39,
+    "original_name": "是否发生PCS",
+    "english_name": "pcs",
+    "type": "binary",
+    "role": "outcome",
+    "included_in_dataset_csv": true
+  },
+  {
+    "source_order": 40,
+    "original_name": "PCS发生时间",
+    "english_name": "pcs_onset_time_days",
+    "type": "numeric",
+    "role": "post_outcome",
+    "included_in_dataset_csv": false
+  },
+  {
+    "source_order": 41,
+    "original_name": "PCS症状类型",
+    "english_name": "pcs_symptom_type",
+    "type": "categorical",
+    "role": "post_outcome",
+    "included_in_dataset_csv": false
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "source_file": "C:\\Users\\Han\\Desktop\\PCS\\data\\数据（终）.xlsx",
+  "dataset_csv": "C:\\Users\\Han\\Desktop\\PCS\\dataset.csv",
+  "n_rows": 311,
+  "n_columns": 37,
+  "pcs_positive": 70,
+  "pcs_negative": 241,
+  "dropped_columns": [
+    "patient_name",
+    "hospital_id",
+    "pcs_onset_time_days",
+    "pcs_symptom_type"
+  ],
+  "figure_directory": "C:\\Users\\Han\\Desktop\\PCS\\output\\dataset_insights"
+}

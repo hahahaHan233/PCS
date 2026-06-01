@@ -1,0 +1,189 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1300" viewBox="0 0 2200 1300">
+  <defs>
+    <style>
+      .bg { fill: #f6f8fb; }
+      .title { font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 50px; font-weight: 700; fill: #182235; }
+      .subtitle { font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 25px; fill: #53606f; }
+      .stage { font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 27px; font-weight: 700; fill: #172033; }
+      .label { font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 22px; fill: #202938; }
+      .small { font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 18px; fill: #3d4858; }
+      .tiny { font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 16px; fill: #53606f; }
+      .caption { font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 18px; fill: #5d6877; }
+      .card { fill: #ffffff; stroke: #d7deea; stroke-width: 2; rx: 12; }
+      .input { fill: #eaf4ff; stroke: #84b7e5; }
+      .prep { fill: #eef9f1; stroke: #8fc99b; }
+      .model { fill: #f3efff; stroke: #a99be8; }
+      .eval { fill: #fff4df; stroke: #e9b85d; }
+      .xai { fill: #ffeff2; stroke: #e99aa7; }
+      .clinic { fill: #eaf8f7; stroke: #73c6bf; }
+      .pill { fill: #ffffff; stroke: #c9d3e2; stroke-width: 1.7; rx: 19; }
+      .algo { fill: #ffffff; stroke: #8f82dd; stroke-width: 2; rx: 9; }
+      .metric { fill: #ffffff; stroke: #e2ad4d; stroke-width: 2; rx: 9; }
+      .low { fill: #48a36e; }
+      .mid { fill: #dea233; }
+      .high { fill: #d74b5a; }
+      .blue { fill: #4779b6; }
+      .red { fill: #d94d5c; }
+      .line { stroke: #465466; stroke-width: 3.3; fill: none; marker-end: url(#arrow); }
+      .softline { stroke: #7b8798; stroke-width: 2.6; fill: none; marker-end: url(#arrowSoft); }
+      .dash { stroke: #c7d0de; stroke-width: 2; stroke-dasharray: 8 8; }
+      .axis { stroke: #7b8798; stroke-width: 2; fill: none; }
+      .curve1 { stroke: #4779b6; stroke-width: 4; fill: none; }
+      .curve2 { stroke: #d94d5c; stroke-width: 4; fill: none; }
+      .curve3 { stroke: #48a36e; stroke-width: 4; fill: none; }
+      .bar1 { fill: #4779b6; }
+      .bar2 { fill: #8f82dd; }
+      .bar3 { fill: #d94d5c; }
+      .bar4 { fill: #48a36e; }
+    </style>
+    <marker id="arrow" markerWidth="13" markerHeight="13" refX="11" refY="6.5" orient="auto">
+      <path d="M0,0 L13,6.5 L0,13 Z" fill="#465466"/>
+    </marker>
+    <marker id="arrowSoft" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto">
+      <path d="M0,0 L11,5.5 L0,11 Z" fill="#7b8798"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="2200" height="1300"/>
+
+  <text class="title" x="95" y="88">基于多算法机器学习的 PCS 发生风险预测与可解释临床转化</text>
+  <text class="subtitle" x="98" y="128">多源临床特征输入 → 预测模型构建 → 多维性能评估 → 最优模型解释 → 个体化风险分层</text>
+
+  <!-- Top pipeline -->
+  <rect class="card input" x="80" y="190" width="350" height="300"/>
+  <text class="stage" x="115" y="238">1. 多源临床数据</text>
+  <rect class="pill" x="115" y="270" width="130" height="40"/>
+  <text class="small" x="145" y="296">N = 311</text>
+  <rect class="pill" x="260" y="270" width="130" height="40"/>
+  <text class="small" x="286" y="296">PCS = 70</text>
+  <circle cx="128" cy="350" r="7" class="blue"/>
+  <text class="small" x="148" y="357">人口学与生活方式</text>
+  <circle cx="128" cy="386" r="7" class="blue"/>
+  <text class="small" x="148" y="393">术前症状与病史</text>
+  <circle cx="128" cy="422" r="7" class="blue"/>
+  <text class="small" x="148" y="429">影像学特征</text>
+  <circle cx="128" cy="458" r="7" class="blue"/>
+  <text class="small" x="148" y="465">肝胆实验室指标</text>
+
+  <line class="line" x1="430" y1="340" x2="505" y2="340"/>
+
+  <rect class="card prep" x="505" y="190" width="350" height="300"/>
+  <text class="stage" x="540" y="238">2. 数据预处理</text>
+  <text class="small" x="540" y="290">变量字典与结局定义</text>
+  <text class="small" x="540" y="330">缺失值与异常值核查</text>
+  <text class="small" x="540" y="370">分类变量编码</text>
+  <text class="small" x="540" y="410">连续变量标准化</text>
+  <text class="small" x="540" y="450">分层抽样 / 交叉验证</text>
+
+  <line class="line" x1="855" y1="340" x2="930" y2="340"/>
+
+  <rect class="card model" x="930" y="165" width="465" height="350"/>
+  <text class="stage" x="965" y="215">3. 多算法预测模型构建</text>
+  <text class="small" x="965" y="255">以 Logistic 回归为传统基线，比较非线性机器学习模型</text>
+  <rect class="algo" x="965" y="285" width="175" height="52"/>
+  <text class="label" x="992" y="318">Logistic</text>
+  <rect class="algo" x="1165" y="285" width="175" height="52"/>
+  <text class="label" x="1190" y="318">Random Forest</text>
+  <rect class="algo" x="965" y="355" width="175" height="52"/>
+  <text class="label" x="995" y="388">XGBoost</text>
+  <rect class="algo" x="1165" y="355" width="175" height="52"/>
+  <text class="label" x="1210" y="388">LightGBM</text>
+  <rect class="algo" x="1065" y="425" width="175" height="52"/>
+  <text class="label" x="1116" y="458">SVM</text>
+  <text class="tiny" x="965" y="497">核心贡献：在 PCS 风险预测场景中系统比较传统统计模型与多种机器学习算法</text>
+
+  <line class="line" x1="1395" y1="340" x2="1470" y2="340"/>
+
+  <rect class="card eval" x="1470" y="190" width="345" height="300"/>
+  <text class="stage" x="1505" y="238">4. 多维模型评估</text>
+  <rect class="metric" x="1505" y="270" width="125" height="42"/>
+  <text class="small" x="1543" y="297">AUC</text>
+  <rect class="metric" x="1648" y="270" width="125" height="42"/>
+  <text class="small" x="1673" y="297">Sensitivity</text>
+  <rect class="metric" x="1505" y="330" width="125" height="42"/>
+  <text class="small" x="1528" y="357">Specificity</text>
+  <rect class="metric" x="1648" y="330" width="125" height="42"/>
+  <text class="small" x="1695" y="357">F1</text>
+  <rect class="metric" x="1505" y="390" width="125" height="42"/>
+  <text class="small" x="1530" y="417">Calibration</text>
+  <rect class="metric" x="1648" y="390" width="125" height="42"/>
+  <text class="small" x="1693" y="417">DCA</text>
+  <text class="tiny" x="1505" y="467">选择兼具区分度、校准度与临床净获益的最优模型</text>
+
+  <line class="line" x1="1815" y1="340" x2="1890" y2="340"/>
+
+  <rect class="card clinic" x="1890" y="190" width="230" height="300"/>
+  <text class="stage" x="1925" y="238">5. 临床输出</text>
+  <text class="small" x="1925" y="292">个体化 PCS</text>
+  <text class="small" x="1925" y="322">预测概率</text>
+  <text class="small" x="1925" y="374">低 / 中 / 高</text>
+  <text class="small" x="1925" y="404">风险分层</text>
+  <text class="tiny" x="1925" y="455">辅助术后随访</text>
+
+  <!-- Bottom evidence panels -->
+  <rect class="card eval" x="80" y="580" width="615" height="430"/>
+  <text class="stage" x="115" y="630">模型预测优势的证据链</text>
+  <text class="small" x="115" y="670">同一预处理 pipeline 下比较多种算法，避免单模型结论偏倚</text>
+  <line class="axis" x1="140" y1="910" x2="600" y2="910"/>
+  <line class="axis" x1="140" y1="910" x2="140" y2="735"/>
+  <rect class="bar1" x="185" y="820" width="48" height="90"/>
+  <rect class="bar2" x="285" y="785" width="48" height="125"/>
+  <rect class="bar3" x="385" y="750" width="48" height="160"/>
+  <rect class="bar4" x="485" y="765" width="48" height="145"/>
+  <text class="tiny" x="160" y="946">Logistic</text>
+  <text class="tiny" x="270" y="946">RF</text>
+  <text class="tiny" x="362" y="946">XGBoost</text>
+  <text class="tiny" x="470" y="946">LightGBM</text>
+  <text class="tiny" x="105" y="750">AUC</text>
+  <text class="caption" x="115" y="985">注：示意图不填入最终数值；正式论文需替换为真实交叉验证/测试集结果。</text>
+
+  <rect class="card eval" x="735" y="580" width="615" height="430"/>
+  <text class="stage" x="770" y="630">评估不只看准确率</text>
+  <text class="small" x="770" y="670">PCS 阳性约 22.5%，因此更强调阳性识别、校准与临床获益</text>
+  <line class="axis" x1="790" y1="910" x2="1010" y2="910"/>
+  <line class="axis" x1="790" y1="910" x2="790" y2="740"/>
+  <path class="curve1" d="M790,900 C835,835 890,790 1010,755"/>
+  <path class="curve2" d="M790,900 C850,865 920,845 1010,815"/>
+  <text class="tiny" x="815" y="940">ROC / PR 曲线</text>
+  <line class="axis" x1="1085" y1="910" x2="1305" y2="910"/>
+  <line class="axis" x1="1085" y1="910" x2="1085" y2="740"/>
+  <path class="curve3" d="M1085,900 C1130,850 1190,815 1305,790"/>
+  <path class="curve2" d="M1085,900 C1135,878 1205,870 1305,850"/>
+  <text class="tiny" x="1115" y="940">Calibration / DCA</text>
+  <rect class="pill" x="810" y="720" width="145" height="38"/>
+  <text class="tiny" x="840" y="744">Sensitivity</text>
+  <rect class="pill" x="970" y="720" width="145" height="38"/>
+  <text class="tiny" x="1005" y="744">Specificity</text>
+  <rect class="pill" x="1130" y="720" width="145" height="38"/>
+  <text class="tiny" x="1170" y="744">Brier</text>
+
+  <rect class="card xai" x="1390" y="580" width="730" height="430"/>
+  <text class="stage" x="1425" y="630">最优模型解释与风险分层</text>
+  <text class="small" x="1425" y="670">将黑箱预测转化为可理解的临床风险信号</text>
+  <line class="axis" x1="1450" y1="910" x2="1770" y2="910"/>
+  <line class="axis" x1="1450" y1="910" x2="1450" y2="735"/>
+  <circle cx="1510" cy="805" r="10" class="red"/>
+  <circle cx="1560" cy="780" r="10" class="red"/>
+  <circle cx="1610" cy="835" r="10" class="blue"/>
+  <circle cx="1660" cy="760" r="10" class="red"/>
+  <circle cx="1710" cy="850" r="10" class="blue"/>
+  <text class="tiny" x="1455" y="945">SHAP：GGT / ALT / ALP / AST / CA19-9 / 症状变量</text>
+  <rect class="pill" x="1825" y="735" width="230" height="45"/>
+  <circle cx="1852" cy="758" r="9" class="low"/>
+  <text class="small" x="1872" y="765">低风险</text>
+  <rect class="pill" x="1825" y="805" width="230" height="45"/>
+  <circle cx="1852" cy="828" r="9" class="mid"/>
+  <text class="small" x="1872" y="835">中风险</text>
+  <rect class="pill" x="1825" y="875" width="230" height="45"/>
+  <circle cx="1852" cy="898" r="9" class="high"/>
+  <text class="small" x="1872" y="905">高风险</text>
+  <text class="caption" x="1425" y="985">输出：关键预测因子、个体化解释、随访强度分层建议。</text>
+
+  <!-- Contribution strip -->
+  <rect class="card" x="80" y="1075" width="2040" height="130"/>
+  <text class="stage" x="115" y="1125">核心贡献</text>
+  <text class="label" x="270" y="1125">在 PCS 这一特定术后综合征场景中，构建并比较多种机器学习预测模型，</text>
+  <text class="label" x="270" y="1160">通过区分度、校准度和决策曲线验证临床可用性，并用 SHAP 实现可解释风险分层。</text>
+
+  <text class="caption" x="85" y="1258">Central illustration. End-to-end pipeline for multi-algorithm machine-learning prediction, evaluation, interpretation, and clinical translation of PCS risk.</text>
+</svg>

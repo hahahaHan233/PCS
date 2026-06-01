@@ -1,0 +1,37 @@
+﻿original_variable,display_name,mean_abs_shap,rank,clinical_group
+ggt,GGT,0.08247403153991116,1,Laboratory
+alt,ALT,0.07607243838442054,2,Laboratory
+ast,AST,0.04811544747055751,3,Laboratory
+alp,ALP,0.041985891030429684,4,Laboratory
+ca199,CA19-9,0.03999657096110408,5,Laboratory
+total_bilirubin,Total bilirubin,0.03400570388349241,6,Laboratory
+symptom_duration,Symptom duration,0.020625195363435156,7,Symptoms
+total_bile_acid,Total bile acid,0.01945642817341552,8,Laboratory
+pain_frequency,Pain frequency,0.017939532059797748,9,Symptoms
+age,Age,0.0075495200426325265,10,Demographics
+alpha_fetoprotein,Alpha-fetoprotein,0.0060541564472858895,11,Laboratory
+stone_location,Stone location,0.0059987167213810385,12,Imaging
+bmi,BMI,0.005879052476112265,13,Demographics
+occupation,Occupation,0.005241590362547812,14,Demographics
+total_cholesterol,Total cholesterol,0.005236339135432537,15,Laboratory
+max_stone_diameter_mm,Maximum stone diameter,0.004407160817145367,16,Imaging
+weight_kg,Weight,0.00438377767256833,17,Demographics
+triglyceride,Triglyceride,0.003937013528893642,18,Laboratory
+education_level,Education level,0.002621241160916311,19,Demographics
+common_bile_duct_diameter_mm,Common bile duct diameter,0.002296109001039611,20,Imaging
+meal_related_pain,Meal-related pain,0.0020726871991761184,21,Symptoms
+height_cm,Height,0.0020407817799269813,22,Demographics
+smoking,Smoking,0.0019563577060925505,23,Lifestyle
+abdominal_pain,Abdominal pain,0.0012059802568278413,24,Symptoms
+sex,Sex,0.0011461765048461935,25,Demographics
+hyperlipidemia,Hyperlipidemia,0.0010887022284138744,26,Medical history
+stone_number,Stone number,0.0008880855208945736,27,Imaging
+fatty_liver,Fatty liver,0.0007605786601118466,28,Imaging
+hypertension,Hypertension,0.0007541988166658775,29,Medical history
+prior_abdominal_surgery,Prior abdominal surgery,0.0006761062230359636,30,Medical history
+radiating_pain,Radiating pain,0.0006746219251474059,31,Symptoms
+diabetes,Diabetes,0.0005029764265288248,32,Medical history
+alcohol_use,Alcohol use,0.0004259137122958606,33,Lifestyle
+gallbladder_wall_thickening,Gallbladder wall thickening,0.0003547119458003676,34,Imaging
+gallbladder_atrophy,Gallbladder atrophy,0.0,35,Imaging
+anxiety_depression,Anxiety/depression,0.0,36,Medical history

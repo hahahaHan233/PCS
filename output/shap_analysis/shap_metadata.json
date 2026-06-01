@@ -1,0 +1,83 @@
+{
+  "model": "Random Forest",
+  "n_rows": 311,
+  "n_transformed_features": 57,
+  "base_value": 0.5000000000000003,
+  "selected_patient": {
+    "selected_row_index": 110,
+    "observed_pcs": 1,
+    "predicted_probability": 0.9744930949544311
+  },
+  "top_variables": [
+    {
+      "original_variable": "ggt",
+      "display_name": "GGT",
+      "mean_abs_shap": 0.08247403153991116,
+      "rank": 1,
+      "clinical_group": "Laboratory"
+    },
+    {
+      "original_variable": "alt",
+      "display_name": "ALT",
+      "mean_abs_shap": 0.07607243838442054,
+      "rank": 2,
+      "clinical_group": "Laboratory"
+    },
+    {
+      "original_variable": "ast",
+      "display_name": "AST",
+      "mean_abs_shap": 0.04811544747055751,
+      "rank": 3,
+      "clinical_group": "Laboratory"
+    },
+    {
+      "original_variable": "alp",
+      "display_name": "ALP",
+      "mean_abs_shap": 0.041985891030429684,
+      "rank": 4,
+      "clinical_group": "Laboratory"
+    },
+    {
+      "original_variable": "ca199",
+      "display_name": "CA19-9",
+      "mean_abs_shap": 0.03999657096110408,
+      "rank": 5,
+      "clinical_group": "Laboratory"
+    },
+    {
+      "original_variable": "total_bilirubin",
+      "display_name": "Total bilirubin",
+      "mean_abs_shap": 0.03400570388349241,
+      "rank": 6,
+      "clinical_group": "Laboratory"
+    },
+    {
+      "original_variable": "symptom_duration",
+      "display_name": "Symptom duration",
+      "mean_abs_shap": 0.020625195363435156,
+      "rank": 7,
+      "clinical_group": "Symptoms"
+    },
+    {
+      "original_variable": "total_bile_acid",
+      "display_name": "Total bile acid",
+      "mean_abs_shap": 0.01945642817341552,
+      "rank": 8,
+      "clinical_group": "Laboratory"
+    },
+    {
+      "original_variable": "pain_frequency",
+      "display_name": "Pain frequency",
+      "mean_abs_shap": 0.017939532059797748,
+      "rank": 9,
+      "clinical_group": "Symptoms"
+    },
+    {
+      "original_variable": "age",
+      "display_name": "Age",
+      "mean_abs_shap": 0.0075495200426325265,
+      "rank": 10,
+      "clinical_group": "Demographics"
+    }
+  ]
+}

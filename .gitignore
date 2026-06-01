@@ -1,0 +1,29 @@
+# Local IDE and cache files
+.idea/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Raw or row-level clinical data. Keep these local unless a de-identified
+# sharing package is explicitly prepared.
+data/
+dataset.csv
+*.xlsx
+!output/modeling/model_performance.xlsx
+
+# Row-level derived clinical datasets/predictions
+output/pcs_symptom_task/pcs_symptom_labeled_dataset.csv
+output/pcs_symptom_task/pcs_symptom_oof_predictions.csv
+output/pcs_symptom_task/pcs_symptom_prediction_outputs.xlsx
+output/modeling/cross_validated_oof_predictions.csv
+
+# Local LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
