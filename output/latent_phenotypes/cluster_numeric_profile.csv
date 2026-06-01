@@ -1,0 +1,3 @@
+﻿cluster,age_median,bmi_median,max_stone_diameter_mm_median,common_bile_duct_diameter_mm_median,alt_median,ast_median,alp_median,ggt_median,total_bilirubin_median,total_bile_acid_median,total_cholesterol_median,triglyceride_median,alpha_fetoprotein_median,ca199_median
+0,65.0,22.20408163265306,11.0,6.0,233.0,161.0,176.0,314.5,36.0,14.5,4.17,1.0750000000000002,2.55,24.0
+1,59.0,24.034508494728613,11.0,6.0,21.0,21.0,79.0,26.0,11.7,2.3,4.6,1.28,2.57,7.8

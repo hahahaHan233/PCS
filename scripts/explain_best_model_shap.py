@@ -179,6 +179,7 @@ def save_summary_plots(shap_values: np.ndarray, x_transformed: pd.DataFrame) -> 
     plt.title("SHAP summary plot for PCS prediction", pad=18)
     plt.tight_layout()
     plt.savefig(OUTPUT / "shap_summary_plot.png", dpi=300, bbox_inches="tight")
+    plt.savefig(OUTPUT / "shap_summary_plot.pdf", bbox_inches="tight")
     plt.close()
 
     plt.figure()
@@ -186,6 +187,7 @@ def save_summary_plots(shap_values: np.ndarray, x_transformed: pd.DataFrame) -> 
     plt.title("SHAP feature importance for PCS prediction", pad=18)
     plt.tight_layout()
     plt.savefig(OUTPUT / "shap_feature_importance.png", dpi=300, bbox_inches="tight")
+    plt.savefig(OUTPUT / "shap_feature_importance.pdf", bbox_inches="tight")
     plt.close()
 
 
@@ -198,6 +200,7 @@ def save_variable_bar(variable_importance: pd.DataFrame) -> None:
     plt.title("Aggregated SHAP importance by original clinical variable")
     plt.tight_layout()
     plt.savefig(OUTPUT / "shap_variable_importance.png", dpi=300, bbox_inches="tight")
+    plt.savefig(OUTPUT / "shap_variable_importance.pdf", bbox_inches="tight")
     plt.close()
 
 
@@ -214,6 +217,7 @@ def save_domain_bar(variable_importance: pd.DataFrame) -> pd.DataFrame:
     plt.title("SHAP contribution by clinical feature domain")
     plt.tight_layout()
     plt.savefig(OUTPUT / "shap_domain_importance.png", dpi=300, bbox_inches="tight")
+    plt.savefig(OUTPUT / "shap_domain_importance.pdf", bbox_inches="tight")
     plt.close()
     return domain
 
@@ -233,6 +237,7 @@ def save_dependence_plots(
         plt.tight_layout()
         filename = f"shap_dependence_{safe}.png"
         plt.savefig(OUTPUT / filename, dpi=300, bbox_inches="tight")
+        plt.savefig(OUTPUT / filename.replace(".png", ".pdf"), bbox_inches="tight")
         plt.close()
         saved.append(filename)
     return saved
@@ -262,6 +267,7 @@ def save_waterfall_plot(
     plt.title("Individual SHAP explanation for a high-risk patient", pad=18)
     plt.tight_layout()
     plt.savefig(OUTPUT / "shap_single_patient_waterfall.png", dpi=300, bbox_inches="tight")
+    plt.savefig(OUTPUT / "shap_single_patient_waterfall.pdf", bbox_inches="tight")
     plt.close()
     return {
         "selected_row_index": selected_idx,

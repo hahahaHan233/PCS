@@ -16,6 +16,7 @@ output/pcs_symptom_task/pcs_symptom_labeled_dataset.csv
 output/pcs_symptom_task/pcs_symptom_oof_predictions.csv
 output/pcs_symptom_task/pcs_symptom_prediction_outputs.xlsx
 output/modeling/cross_validated_oof_predictions.csv
+output/latent_phenotypes/latent_phenotype_assignments.csv
 
 # Local LaTeX build artifacts
 *.aux

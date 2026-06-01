@@ -1,0 +1,27 @@
+{
+  "n_rows": 311,
+  "n_transformed_features": 57,
+  "pca_explained_variance_ratio": [
+    0.11982131159289611,
+    0.08375444778004575
+  ],
+  "kmeans_silhouette_scores": [
+    {
+      "k": 2,
+      "silhouette": 0.21854217653514568
+    },
+    {
+      "k": 3,
+      "silhouette": 0.07082292859488448
+    },
+    {
+      "k": 4,
+      "silhouette": 0.06642298755657455
+    },
+    {
+      "k": 5,
+      "silhouette": 0.08178766032022038
+    }
+  ],
+  "selected_k": 2
+}

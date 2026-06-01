@@ -1,11 +1,14 @@
 {
   "task": "multiclass PCS symptom occurrence category prediction",
   "n_rows_labeled_dataset": 311,
-  "n_rows_modeled": 310,
+  "n_rows_modeled": 69,
+  "excluded_classes": [
+    "no_pcs",
+    "pcs_unknown"
+  ],
   "classes": [
     "constipation",
     "gi_dysfunction_dyspepsia",
-    "no_pcs",
     "pain"
   ],
   "cv": "5-fold stratified cross-validation",

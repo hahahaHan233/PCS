@@ -19,6 +19,7 @@
 - [x] 完成校准曲线、决策曲线分析
 - [x] 补充 PCS 症状类型文本标签化和症状发生类别预测任务
 - [ ] 完成风险分层
+- [x] 补充无监督降维、聚类与潜在 PCS 表型探索
 - [ ] 完成论文初稿、图表编号和投稿格式整理
 
 ## 1. 整体处理工作流
@@ -137,12 +138,37 @@
 - [x] 对 PCS 阳性但症状文本缺失者标记为 `pcs_unknown`
 - [x] 输出症状标签数据集：`output/pcs_symptom_task/pcs_symptom_labeled_dataset.csv`
 - [x] 输出标签映射表：`output/pcs_symptom_task/pcs_symptom_label_mapping.csv`
-- [x] 构建补充预测任务：PCS 症状发生类别多分类预测
+- [x] 构建补充预测任务：PCS 阳性人群内症状亚型多分类预测
 - [x] 使用 5 折分层交叉验证比较多种模型
 - [x] 输出性能报告：`output/pcs_symptom_task/pcs_symptom_prediction_report.md`
 - [x] 输出类别分布、混淆矩阵和 one-vs-rest ROC 曲线
-- [ ] 在论文 Methods 中说明该任务为探索性补充分析，且症状标签不作为原 PCS 二分类模型输入特征
+- [ ] 在论文 Methods 中说明该任务为探索性补充分析，且 `no_pcs` 不纳入症状亚型分类指标计算
 - [ ] 在 Discussion 中讨论症状亚型样本量小和类别不平衡带来的不确定性
+
+### 1.11 无监督降维、聚类与潜在 PCS 表型探索
+
+- [x] 新增 `scripts/explore_latent_phenotypes.py`
+- [x] 基于术前/围手术期预测变量建立统一预处理 pipeline
+- [x] 输出 PCA 二维可视化，按 PCS 状态着色
+- [x] 输出 t-SNE 或 UMAP 二维可视化，按 PCS 状态着色
+- [x] 在 PCS 阳性患者中输出降维图，按症状亚型着色
+- [x] 进行 K-means 或层次聚类，探索潜在临床表型
+- [x] 输出 cluster heatmap，展示各潜在表型的关键变量模式
+- [x] 统计不同 cluster 的 PCS 发生率
+- [x] 统计不同 cluster 中 PCS 症状亚型分布
+- [x] 统计不同 cluster 的 PCS 发生时间或 burden proxy 差异
+- [x] 输出 `output/latent_phenotypes/latent_phenotype_report.md`
+- [ ] 在论文中明确该部分为 exploratory / hypothesis-generating analysis
+
+### 1.12 图表输出与 LaTeX 规范
+
+- [x] 后续所有模型曲线、SHAP 图、聚类图和论文主图优先导出 PDF 矢量或高分辨率 PDF
+- [x] PNG 仅作为预览或备用格式保存
+- [x] LaTeX 项目中插入 PDF 图件，而不是 PNG 图件
+- [x] 将 `latex_demo_project/figures/` 中的现有 PNG 图替换或补充为 PDF
+- [x] 更新 `latex_demo_project/main.tex` 中的图像引用，使正式版本使用 PDF
+- [x] 统一图件命名规则：`fig_main_pipeline.pdf`、`fig_roc.pdf`、`fig_shap_summary.pdf` 等
+- [x] 统一图注中说明图件来源：cross-validated OOF predictions、SHAP final model、exploratory clustering 等
 
 ## 2. 论文各 Section 待完成事项
 
@@ -238,7 +264,8 @@
 - [x] 说明 summary plot、importance plot、dependence plot 和 individual explanation 的解释方式
 - [ ] 说明风险分层阈值来源
 - [ ] 说明如何比较不同风险层的实际 PCS 发生率
-- [ ] 描述 PCS 症状类型自由文本标签化和补充多分类预测任务
+- [ ] 描述 PCS 症状类型自由文本标签化和 PCS 阳性人群内补充多分类预测任务
+- [x] 描述无监督降维、聚类和潜在表型探索方法
 
 ### 2.11 Results - Cohort Characteristics
 
@@ -285,12 +312,22 @@
 
 - [x] 报告原始 PCS 症状文本分布
 - [x] 报告症状标签映射和合并类别
-- [x] 构建 PCS 症状发生类别多分类预测任务
+- [x] 构建 PCS 阳性人群内症状亚型多分类预测任务
 - [x] 形成补充模型性能表
 - [x] 形成症状类别分布图、混淆矩阵和 one-vs-rest ROC 曲线
 - [ ] 将该任务明确表述为探索性补充分析
 
-### 2.17 Discussion
+### 2.17 Results - Latent Phenotype Exploration
+
+- [x] 形成 PCA / t-SNE 降维可视化（UMAP 可选，当前未安装）
+- [x] 形成 PCS 阳性患者内按症状亚型着色的降维图
+- [x] 形成聚类热图和 cluster 特征概览
+- [x] 报告不同 cluster 的 PCS 发生率
+- [x] 报告不同 cluster 的症状亚型分布和 PCS 发生时间差异
+- [x] 判断症状亚型是否在术前变量空间中存在可分离趋势
+- [x] 将结果明确表述为探索性发现
+
+### 2.18 Discussion
 
 - [ ] 总结主要发现：PCS 发生率、关键危险因素、最佳模型表现、SHAP 解释和风险分层
 - [ ] 与既往 PCS 发生率和危险因素研究比较
@@ -300,9 +337,10 @@
 - [ ] 讨论 SHAP 对临床理解和模型信任的价值
 - [ ] 讨论风险分层在个体化随访中的潜在应用
 - [ ] 讨论 PCS 症状类别预测任务的探索性价值和类别不平衡问题
+- [ ] 讨论无监督表型分析对解释症状亚型预测困难和潜在病症强度分层的价值
 - [ ] 强调本研究仍属于内部验证，不能直接替代临床判断
 
-### 2.18 Limitations
+### 2.19 Limitations
 
 - [ ] 单中心或单数据来源导致外部推广性有限
 - [ ] 样本量较小，PCS 阳性仅 70 例，复杂模型可能存在过拟合风险
@@ -311,16 +349,17 @@
 - [ ] 缺少外部验证队列
 - [ ] 部分潜在影响因素尚未纳入，例如手术方式、术中情况、术后用药、并发症、心理因素量表等
 - [ ] PCS 症状类别预测任务中各亚型样本量较小，模型结果仅适合作为探索性发现
+- [ ] 聚类和降维分析不提供因果证据，只能作为假设生成结果
 - [ ] 模型尚未进行前瞻性临床验证
 
-### 2.19 Conclusion
+### 2.20 Conclusion
 
 - [ ] 用 2-4 句话总结研究发现
 - [ ] 强调模型可用于识别 PCS 高风险患者
 - [ ] 强调 SHAP 提供关键变量解释
 - [ ] 强调未来需多中心外部验证和前瞻性评估
 
-### 2.20 References
+### 2.21 References
 
 - [ ] 系统检索 PCS 定义、发生率、症状谱和危险因素文献
 - [ ] 系统检索胆囊切除术后并发症机器学习预测模型文献
@@ -330,7 +369,7 @@
 - [ ] 优先补充近 5 年系统综述、指南、队列研究和医学 AI 预测模型研究
 - [ ] 按目标期刊格式统一参考文献
 
-### 2.21 Tables and Figures
+### 2.22 Tables and Figures
 
 - [ ] Table 1：PCS 组与非 PCS 组基线特征
 - [ ] Table 2：单因素和多因素 Logistic 回归
@@ -347,6 +386,10 @@
 - [x] Figure 6：SHAP feature importance
 - [ ] Figure 7：风险分层图
 - [x] Supplementary Figure：PCS 症状类别分布、混淆矩阵和 one-vs-rest ROC 曲线
+- [x] Supplementary Figure：PCA / t-SNE 降维图（UMAP 可选，当前未安装）
+- [x] Supplementary Figure：潜在表型聚类热图
+- [x] Supplementary Table：cluster 的 PCS 发生率、症状亚型分布和发生时间统计
+- [x] 所有正式图件在 LaTeX 中使用 PDF 格式插入
 
 ## 3. 投稿前质量控制清单
 

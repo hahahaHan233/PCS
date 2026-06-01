@@ -44,9 +44,9 @@ N_SPLITS = 5
 RAW_TO_LABEL = {
     "腹痛": "abdominal_pain",
     "便秘": "constipation",
-    "胃肠功能紊乱": "gastrointestinal_dysfunction",
+    "胃肠功能紊乱": "dyspepsia",
     "消化不良": "dyspepsia",
-    "肠道菌群失调": "intestinal_dysbiosis",
+    "肠道菌群失调": "dyspepsia",
     "慢性胃炎": "chronic_gastritis",
     "腹胀": "abdominal_distension",
 }
@@ -54,9 +54,7 @@ RAW_TO_LABEL = {
 LABEL_TO_CATEGORY = {
     "abdominal_pain": "pain",
     "constipation": "constipation",
-    "gastrointestinal_dysfunction": "gi_dysfunction_dyspepsia",
     "dyspepsia": "gi_dysfunction_dyspepsia",
-    "intestinal_dysbiosis": "gi_dysfunction_dyspepsia",
     "chronic_gastritis": "gi_dysfunction_dyspepsia",
     "abdominal_distension": "gi_dysfunction_dyspepsia",
 }
@@ -65,7 +63,8 @@ CATEGORY_DISPLAY = {
     "no_pcs": "No PCS",
     "pain": "Pain phenotype",
     "constipation": "Constipation phenotype",
-    "gi_dysfunction_dyspepsia": "GI dysfunction / dyspepsia phenotype",
+    "gi_dysfunction_dyspepsia": "Dyspepsia-related phenotype",
+    "pcs_unknown": "PCS symptom unknown",
 }
 
 
@@ -220,7 +219,9 @@ def normalize_probabilities(prob: np.ndarray) -> np.ndarray:
 
 
 def evaluate_symptom_task(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, LabelEncoder]:
-    model_df = df.loc[df["pcs_symptom_category"] != "pcs_unknown"].copy()
+    # Downstream subtype task: only PCS-positive patients with known symptom labels.
+    # no_pcs is deliberately excluded so balanced accuracy reflects symptom-subtype recall only.
+    model_df = df.loc[(df["pcs"] == 1) & (df["pcs_symptom_category"] != "pcs_unknown")].copy()
     y_text = model_df["pcs_symptom_category"]
     predictors = model_df.drop(
         columns=[
@@ -332,6 +333,7 @@ def plot_outputs(model_df: pd.DataFrame, y: np.ndarray, encoder: LabelEncoder, b
     plt.xticks(rotation=25, ha="right")
     plt.tight_layout()
     plt.savefig(OUTPUT / "pcs_symptom_class_distribution.png", bbox_inches="tight")
+    plt.savefig(OUTPUT / "pcs_symptom_class_distribution.pdf", bbox_inches="tight")
     plt.close()
 
     pred = np.argmax(best_prob, axis=1)
@@ -350,6 +352,7 @@ def plot_outputs(model_df: pd.DataFrame, y: np.ndarray, encoder: LabelEncoder, b
     plt.title(f"OOF confusion matrix: {best_model}")
     plt.tight_layout()
     plt.savefig(OUTPUT / "pcs_symptom_confusion_matrix.png", bbox_inches="tight")
+    plt.savefig(OUTPUT / "pcs_symptom_confusion_matrix.pdf", bbox_inches="tight")
     plt.close()
 
     lb = LabelBinarizer()
@@ -366,6 +369,7 @@ def plot_outputs(model_df: pd.DataFrame, y: np.ndarray, encoder: LabelEncoder, b
     plt.legend(loc="lower right", fontsize=8)
     plt.tight_layout()
     plt.savefig(OUTPUT / "pcs_symptom_ovr_roc.png", bbox_inches="tight")
+    plt.savefig(OUTPUT / "pcs_symptom_ovr_roc.pdf", bbox_inches="tight")
     plt.close()
 
 
@@ -390,17 +394,28 @@ def markdown_table(df: pd.DataFrame) -> str:
 def write_report(symptom_df: pd.DataFrame, summary_df: pd.DataFrame, encoder: LabelEncoder) -> None:
     class_counts = symptom_df["pcs_symptom_category"].value_counts().rename_axis("class").reset_index(name="n")
     class_counts["display_name"] = class_counts["class"].map(lambda x: CATEGORY_DISPLAY.get(x, x))
+    modeled_counts = (
+        symptom_df.loc[(symptom_df["pcs"] == 1) & (symptom_df["pcs_symptom_category"] != "pcs_unknown"), "pcs_symptom_category"]
+        .value_counts()
+        .rename_axis("class")
+        .reset_index(name="n")
+    )
+    modeled_counts["display_name"] = modeled_counts["class"].map(lambda x: CATEGORY_DISPLAY.get(x, x))
     raw_counts = symptom_df["pcs_symptom_raw"].fillna("None").value_counts().rename_axis("raw_symptom").reset_index(name="n")
     best = summary_df.iloc[0]
     text = f"""# PCS Symptom Occurrence Prediction Task
 
 ## Label construction
 
-The original free-text field `PCS症状类型` was converted into structured labels and a merged modeling category. The merged outcome is intended as an additional prediction task and is **not** used as an input feature for the original PCS binary prediction model.
+The original free-text field `PCS症状类型` was converted into structured labels and a merged modeling category. This task is a downstream subtype classifier among PCS-positive patients and is **not** used as an input feature for the original PCS binary prediction model.
 
-Modeling classes:
+Constructed classes in the full cohort:
 
 {markdown_table(class_counts[["class", "display_name", "n"]])}
+
+Modeled downstream symptom-subtype classes:
+
+{markdown_table(modeled_counts[["class", "display_name", "n"]])}
 
 Raw symptom text distribution:
 
@@ -408,12 +423,13 @@ Raw symptom text distribution:
 
 ## Prediction task
 
-- Task: multiclass prediction of PCS symptom occurrence category.
+- Task: multiclass prediction of symptom subtype among PCS-positive patients.
 - Outcome: `pcs_symptom_category`.
 - Included classes for modeling: {", ".join(encoder.classes_)}.
-- Excluded from modeling: `pcs_unknown`, because only one PCS-positive patient lacked a symptom text label.
+- Excluded from modeling: `no_pcs`, because this is a downstream subtype task after PCS occurrence; `pcs_unknown`, because only one PCS-positive patient lacked a symptom text label.
 - Predictors: the same preoperative/perioperative variables used in the original PCS prediction task.
 - Validation: {N_SPLITS}-fold stratified cross-validation.
+- Balanced accuracy is the mean recall across the modeled PCS symptom subtypes only; it does not include the `no_pcs` class.
 
 ## Model performance
 
@@ -431,7 +447,7 @@ The current top-ranked model by macro F1 is **{best["model"]}** with OOF macro F
 
 ## Manuscript-ready wording
 
-To further characterize PCS heterogeneity, the free-text PCS symptom field was mapped to structured symptom phenotypes. PCS-negative patients were assigned to `no_pcs`; PCS-positive symptoms were grouped into pain, constipation, and gastrointestinal dysfunction/dyspepsia phenotypes. A secondary multiclass prediction task was then constructed using the same preoperative/perioperative predictors. This task should be interpreted as exploratory because symptom subtype sample sizes are small and external validation is unavailable.
+To further characterize PCS heterogeneity, the free-text PCS symptom field was mapped to structured symptom phenotypes. Among PCS-positive patients with known symptoms, labels were grouped into pain, constipation, and dyspepsia-related phenotypes. Raw entries originally recorded as intestinal dysbiosis or gastrointestinal dysfunction were treated as dyspepsia symptoms for labeling, while the underlying mechanisms can be discussed separately. A downstream multiclass classifier was then constructed using the same preoperative/perioperative predictors. This task should be interpreted as exploratory because symptom subtype sample sizes are small and external validation is unavailable.
 """
     (OUTPUT / "pcs_symptom_prediction_report.md").write_text(text, encoding="utf-8")
 
@@ -464,7 +480,8 @@ def main() -> None:
     metadata = {
         "task": "multiclass PCS symptom occurrence category prediction",
         "n_rows_labeled_dataset": int(len(symptom_df)),
-        "n_rows_modeled": int((symptom_df["pcs_symptom_category"] != "pcs_unknown").sum()),
+        "n_rows_modeled": int(((symptom_df["pcs"] == 1) & (symptom_df["pcs_symptom_category"] != "pcs_unknown")).sum()),
+        "excluded_classes": ["no_pcs", "pcs_unknown"],
         "classes": encoder.classes_.tolist(),
         "cv": f"{N_SPLITS}-fold stratified cross-validation",
         "random_state": RANDOM_STATE,

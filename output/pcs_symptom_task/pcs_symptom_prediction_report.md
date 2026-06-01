@@ -2,17 +2,25 @@
 
 ## Label construction
 
-The original free-text field `PCS症状类型` was converted into structured labels and a merged modeling category. The merged outcome is intended as an additional prediction task and is **not** used as an input feature for the original PCS binary prediction model.
+The original free-text field `PCS症状类型` was converted into structured labels and a merged modeling category. This task is a downstream subtype classifier among PCS-positive patients and is **not** used as an input feature for the original PCS binary prediction model.
 
-Constructed classes:
+Constructed classes in the full cohort:
 
 | class | display_name | n |
 | --- | --- | --- |
 | no_pcs | No PCS | 241 |
-| gi_dysfunction_dyspepsia | GI dysfunction / dyspepsia phenotype | 26 |
+| gi_dysfunction_dyspepsia | Dyspepsia-related phenotype | 26 |
 | pain | Pain phenotype | 24 |
 | constipation | Constipation phenotype | 19 |
-| pcs_unknown | pcs_unknown | 1 |
+| pcs_unknown | PCS symptom unknown | 1 |
+
+Modeled downstream symptom-subtype classes:
+
+| class | display_name | n |
+| --- | --- | --- |
+| gi_dysfunction_dyspepsia | Dyspepsia-related phenotype | 26 |
+| pain | Pain phenotype | 24 |
+| constipation | Constipation phenotype | 19 |
 
 Raw symptom text distribution:
 
@@ -29,24 +37,25 @@ Raw symptom text distribution:
 
 ## Prediction task
 
-- Task: multiclass prediction of PCS symptom occurrence category.
+- Task: multiclass prediction of symptom subtype among PCS-positive patients.
 - Outcome: `pcs_symptom_category`.
-- Included classes for modeling: constipation, gi_dysfunction_dyspepsia, no_pcs, pain.
-- Excluded from modeling: `pcs_unknown`, because only one PCS-positive patient lacked a symptom text label.
+- Included classes for modeling: constipation, gi_dysfunction_dyspepsia, pain.
+- Excluded from modeling: `no_pcs`, because this is a downstream subtype task after PCS occurrence; `pcs_unknown`, because only one PCS-positive patient lacked a symptom text label.
 - Predictors: the same preoperative/perioperative variables used in the original PCS prediction task.
 - Validation: 5-fold stratified cross-validation.
+- Balanced accuracy is the mean recall across the modeled PCS symptom subtypes only; it does not include the `no_pcs` class.
 
 ## Model performance
 
 | model | oof_accuracy | oof_balanced_accuracy | oof_macro_f1 | oof_weighted_f1 | oof_macro_ovr_auc | oof_log_loss |
 | --- | --- | --- | --- | --- | --- | --- |
-| Gradient Boosting | 0.810 | 0.435 | 0.452 | 0.794 | 0.844 | 0.626 |
-| XGBoost | 0.810 | 0.422 | 0.439 | 0.791 | 0.848 | 0.570 |
-| SVM | 0.819 | 0.391 | 0.413 | 0.777 | 0.804 | 0.577 |
-| Random Forest | 0.797 | 0.391 | 0.381 | 0.777 | 0.849 | 0.613 |
-| Multinomial Logistic | 0.677 | 0.367 | 0.349 | 0.710 | 0.673 | 1.246 |
+| XGBoost | 0.391 | 0.380 | 0.381 | 0.387 | 0.529 | 1.336 |
+| Multinomial Logistic | 0.391 | 0.382 | 0.381 | 0.390 | 0.565 | 2.071 |
+| Random Forest | 0.391 | 0.373 | 0.365 | 0.378 | 0.548 | 1.104 |
+| Gradient Boosting | 0.362 | 0.351 | 0.348 | 0.355 | 0.544 | 1.514 |
+| SVM | 0.246 | 0.225 | 0.197 | 0.214 | 0.445 | 1.140 |
 
-The current top-ranked model by macro F1 is **Gradient Boosting** with OOF macro F1 = **0.452**, OOF balanced accuracy = **0.435**, and OOF macro one-vs-rest AUC = **0.844**.
+The current top-ranked model by macro F1 is **XGBoost** with OOF macro F1 = **0.381**, OOF balanced accuracy = **0.380**, and OOF macro one-vs-rest AUC = **0.529**.
 
 ## Figures
 
@@ -58,4 +67,4 @@ The current top-ranked model by macro F1 is **Gradient Boosting** with OOF macro
 
 ## Manuscript-ready wording
 
-To further characterize PCS heterogeneity, the free-text PCS symptom field was mapped to structured symptom phenotypes. PCS-negative patients were assigned to `no_pcs`; PCS-positive symptoms were grouped into pain, constipation, and gastrointestinal dysfunction/dyspepsia phenotypes. A secondary multiclass prediction task was then constructed using the same preoperative/perioperative predictors. This task should be interpreted as exploratory because symptom subtype sample sizes are small and external validation is unavailable.
+To further characterize PCS heterogeneity, the free-text PCS symptom field was mapped to structured symptom phenotypes. Among PCS-positive patients with known symptoms, labels were grouped into pain, constipation, and dyspepsia-related phenotypes. Raw entries originally recorded as intestinal dysbiosis or gastrointestinal dysfunction were treated as dyspepsia symptoms for labeling, while the underlying mechanisms can be discussed separately. A downstream multiclass classifier was then constructed using the same preoperative/perioperative predictors. This task should be interpreted as exploratory because symptom subtype sample sizes are small and external validation is unavailable.

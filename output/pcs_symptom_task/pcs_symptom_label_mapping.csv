@@ -1,9 +1,9 @@
 ﻿raw_symptom,symptom_label,symptom_category
 腹痛,abdominal_pain,pain
 便秘,constipation,constipation
-胃肠功能紊乱,gastrointestinal_dysfunction,gi_dysfunction_dyspepsia
+胃肠功能紊乱,dyspepsia,gi_dysfunction_dyspepsia
 消化不良,dyspepsia,gi_dysfunction_dyspepsia
-肠道菌群失调,intestinal_dysbiosis,gi_dysfunction_dyspepsia
+肠道菌群失调,dyspepsia,gi_dysfunction_dyspepsia
 慢性胃炎,chronic_gastritis,gi_dysfunction_dyspepsia
 腹胀,abdominal_distension,gi_dysfunction_dyspepsia
 ,no_pcs,no_pcs

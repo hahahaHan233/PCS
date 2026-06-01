@@ -224,6 +224,12 @@ def configure_plots() -> None:
     )
 
 
+def save_plot(path: Path) -> None:
+    plt.savefig(path, bbox_inches="tight")
+    if path.suffix.lower() != ".pdf":
+        plt.savefig(path.with_suffix(".pdf"), bbox_inches="tight")
+
+
 def plot_roc(y: pd.Series, oof_predictions: dict[str, np.ndarray], path: Path) -> None:
     plt.figure(figsize=(7.2, 5.4))
     for model_name, prob in oof_predictions.items():
@@ -236,7 +242,7 @@ def plot_roc(y: pd.Series, oof_predictions: dict[str, np.ndarray], path: Path) -
     plt.title("Cross-validated ROC curves")
     plt.legend(loc="lower right", fontsize=8)
     plt.tight_layout()
-    plt.savefig(path, bbox_inches="tight")
+    save_plot(path)
     plt.close()
 
 
@@ -253,7 +259,7 @@ def plot_pr(y: pd.Series, oof_predictions: dict[str, np.ndarray], path: Path) ->
     plt.title("Cross-validated precision-recall curves")
     plt.legend(loc="lower left", fontsize=8)
     plt.tight_layout()
-    plt.savefig(path, bbox_inches="tight")
+    save_plot(path)
     plt.close()
 
 
@@ -269,7 +275,7 @@ def plot_calibration(y: pd.Series, oof_predictions: dict[str, np.ndarray], path:
     plt.title("Cross-validated calibration curves")
     plt.legend(loc="upper left", fontsize=8)
     plt.tight_layout()
-    plt.savefig(path, bbox_inches="tight")
+    save_plot(path)
     plt.close()
 
 
@@ -301,7 +307,7 @@ def plot_dca(y: pd.Series, oof_predictions: dict[str, np.ndarray], path: Path) -
     plt.title("Decision curve analysis based on cross-validated predictions")
     plt.legend(loc="upper right", fontsize=8)
     plt.tight_layout()
-    plt.savefig(path, bbox_inches="tight")
+    save_plot(path)
     plt.close()
 
 
@@ -329,7 +335,7 @@ def plot_metric_heatmap(summary: pd.DataFrame, path: Path) -> None:
             plt.text(j, i, f"{display_df.iloc[i, j]:.2f}", ha="center", va="center", fontsize=8)
     plt.title("Cross-validated model performance overview")
     plt.tight_layout()
-    plt.savefig(path, bbox_inches="tight")
+    save_plot(path)
     plt.close()
 
 

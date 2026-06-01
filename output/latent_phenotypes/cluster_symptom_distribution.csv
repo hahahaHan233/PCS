@@ -1,0 +1,8 @@
+﻿cluster,pcs_symptom_category,n,percent_within_cluster_pcs
+0,constipation,13,30.23255813953488
+0,gi_dysfunction_dyspepsia,14,32.55813953488372
+0,pain,15,34.883720930232556
+0,pcs_unknown,1,2.3255813953488373
+1,constipation,6,22.22222222222222
+1,gi_dysfunction_dyspepsia,12,44.44444444444444
+1,pain,9,33.33333333333333
