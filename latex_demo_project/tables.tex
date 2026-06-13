@@ -1,0 +1,203 @@
+% Consolidated manuscript tables. Generated from the former tables/*.tex fragments.
+% Keep table bodies here so main.tex only depends on one table source file.
+
+\newcommand{\TableBaselineCondensed}{%
+\begin{tabular}{lcccc}
+\toprule
+Characteristic & PCS & No PCS & P & FDR \\
+\midrule
+Age & 64.00 (48.25-72.00) & 59.00 (49.00-67.00) & 0.056 & 0.167 \\
+Sex: female & 32 (45.7\%) & 133 (55.2\%) & 0.175 & 0.312 \\
+Sex: male & 38 (54.3\%) & 108 (44.8\%) & 0.175 & 0.312 \\
+BMI & 22.88 (20.80-24.91) & 24.03 (21.72-26.12) & 0.037 & 0.116 \\
+Symptom duration: long & 1 (1.4\%) & 27 (11.2\%) & <0.001 & <0.001 \\
+Symptom duration: medium & 7 (10.0\%) & 32 (13.3\%) & <0.001 & <0.001 \\
+Symptom duration: none & 6 (8.6\%) & 48 (19.9\%) & <0.001 & <0.001 \\
+Symptom duration: short & 9 (12.9\%) & 54 (22.4\%) & <0.001 & <0.001 \\
+Symptom duration: very\_short & 47 (67.1\%) & 80 (33.2\%) & <0.001 & <0.001 \\
+Abdominal pain: 0 & 6 (8.6\%) & 48 (19.9\%) & 0.031 & 0.108 \\
+Abdominal pain: 1 & 64 (91.4\%) & 193 (80.1\%) & 0.031 & 0.108 \\
+Pain frequency: daily & 48 (68.6\%) & 92 (38.2\%) & <0.001 & 0.001 \\
+Pain frequency: monthly & 7 (10.0\%) & 55 (22.8\%) & <0.001 & 0.001 \\
+Pain frequency: none & 6 (8.6\%) & 48 (19.9\%) & <0.001 & 0.001 \\
+Pain frequency: occasional & 1 (1.4\%) & 10 (4.1\%) & <0.001 & 0.001 \\
+Pain frequency: weekly & 8 (11.4\%) & 36 (14.9\%) & <0.001 & 0.001 \\
+Stone location: cystic\_duct & 1 (1.4\%) & 2 (0.8\%) & 0.110 & 0.241 \\
+Stone location: distal\_common\_bile\_duct & 6 (8.6\%) & 5 (2.1\%) & 0.110 & 0.241 \\
+Stone location: gallbladder\_body & 47 (67.1\%) & 191 (79.3\%) & 0.110 & 0.241 \\
+Stone location: gallbladder\_fundus & 8 (11.4\%) & 16 (6.6\%) & 0.110 & 0.241 \\
+Stone location: gallbladder\_neck & 1 (1.4\%) & 7 (2.9\%) & 0.110 & 0.241 \\
+Stone location: left\_intrahepatic\_bile\_duct & 0 (0.0\%) & 1 (0.4\%) & 0.110 & 0.241 \\
+Stone location: none & 7 (10.0\%) & 19 (7.9\%) & 0.110 & 0.241 \\
+CBD diameter & 6.00 (6.00-7.00) & 6.00 (5.00-6.00) & 0.035 & 0.116 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableUnivariateTop}{%
+\begin{tabular}{llccc}
+\toprule
+Variable & Term & OR (95\% CI) & P & FDR \\
+\midrule
+GGT & ggt & 12.90 (6.88-24.20) & <0.001 & <0.001 \\
+ALP & alp & 6.28 (3.82-10.34) & <0.001 & <0.001 \\
+ALT & alt & 20.30 (8.24-50.01) & <0.001 & <0.001 \\
+Total bilirubin & total\_bilirubin & 5.52 (3.12-9.75) & <0.001 & <0.001 \\
+AST & ast & 45.45 (12.29-168.12) & <0.001 & <0.001 \\
+Total bile acid & total\_bile\_acid & 54.17 (7.66-383.14) & <0.001 & <0.001 \\
+CA19-9 & ca199 & 427.00 (19.28-9456.73) & <0.001 & <0.001 \\
+Pain frequency & pain\_frequency\_monthly & 0.24 (0.10-0.58) & 0.001 & 0.008 \\
+Pain frequency & pain\_frequency\_none & 0.24 (0.10-0.60) & 0.002 & 0.012 \\
+Symptom duration & symptom\_duration\_very\_short & 15.86 (2.09-120.56) & 0.008 & 0.036 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableMultivariable}{%
+\begin{tabular}{lcc}
+\toprule
+Predictor & Adjusted OR (95\% CI) & P \\
+\midrule
+ggt & 7.11 (3.31-15.28) & <0.001 \\
+ca199 & 116.72 (3.75-3630.61) & 0.007 \\
+total\_bilirubin & 1.81 (0.98-3.34) & 0.056 \\
+total\_bile\_acid & 9.56 (0.34-271.84) & 0.186 \\
+symptom\_duration\_medium & 6.07 (0.41-88.85) & 0.188 \\
+pain\_frequency\_weekly & 4.31 (0.31-60.73) & 0.279 \\
+symptom\_duration\_very\_short & 6.04 (0.15-240.34) & 0.338 \\
+pain\_frequency\_occasional & 4.31 (0.16-117.00) & 0.385 \\
+pain\_frequency\_none & 3.15 (0.07-151.09) & 0.561 \\
+pain\_frequency\_monthly & 1.17 (0.08-17.00) & 0.908 \\
+age & 0.98 (0.64-1.51) & 0.928 \\
+symptom\_duration\_short & 1.09 (0.05-23.89) & 0.956 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableRiskStratification}{%
+\begin{tabular}{lcccc}
+\toprule
+Risk group & N & PCS cases & Observed PCS rate & Mean predicted risk \\
+\midrule
+Low (<10\%) & 42 & 2 & 4.8\% & 8.1\% \\
+Intermediate (10-30\%) & 175 & 8 & 4.6\% & 17.3\% \\
+High (>=30\%) & 94 & 60 & 63.8\% & 64.3\% \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableClinicalThresholds}{%
+\begin{tabular}{ccccccc}
+\toprule
+Threshold & Sensitivity & Specificity & PPV & TP/100 & FP/100 & FN/100 \\
+\midrule
+10\% & 0.971 & 0.166 & 0.253 & 21.9 & 64.6 & 0.6 \\
+20\% & 0.943 & 0.660 & 0.446 & 21.2 & 26.4 & 1.3 \\
+30\% & 0.857 & 0.859 & 0.638 & 19.3 & 10.9 & 3.2 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableBootstrapValidation}{%
+\begin{tabular}{lccccc}
+\toprule
+Metric & OOF apparent & Bootstrap mean & CI low & CI high & Optimism-corrected \\
+\midrule
+auc & 0.917 & 0.969 & 0.951 & 0.985 & 0.889 \\
+brier & 0.088 & 0.059 & 0.055 & 0.064 & 0.111 \\
+calibration\_intercept & -0.324 & -0.101 & -0.547 & 0.449 & -0.288 \\
+calibration\_slope & 1.610 & 2.163 & 1.610 & 2.855 & 0.253 \\
+prediction\_instability\_sd & NA & 0.057 & 0.023 & 0.173 & 0.044 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableFeatureAblation}{%
+\begin{tabular}{lccccc}
+\toprule
+Feature set & AUC & AP & Brier & Sensitivity & Specificity \\
+\midrule
+Symptoms + Laboratory & 0.925 & 0.846 & 0.084 & 0.714 & 0.950 \\
+Laboratory & 0.923 & 0.835 & 0.082 & 0.743 & 0.938 \\
+All variables & 0.913 & 0.842 & 0.089 & 0.714 & 0.946 \\
+Symptoms & 0.638 & 0.287 & 0.224 & 0.657 & 0.660 \\
+Demographics & 0.566 & 0.307 & 0.211 & 0.300 & 0.797 \\
+Imaging & 0.563 & 0.308 & 0.228 & 0.386 & 0.726 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableCalibrationComparison}{%
+\begin{tabular}{lcccc}
+\toprule
+Calibration method & AUC & Brier & Intercept & Slope \\
+\midrule
+Platt scaling & 0.911 & 0.081 & -0.016 & 1.077 \\
+Isotonic calibration & 0.908 & 0.084 & -0.516 & 0.630 \\
+Raw RF & 0.913 & 0.089 & -0.339 & 1.585 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableShapStability}{%
+\begin{tabular}{lccc}
+\toprule
+Feature & Top-10 frequency & Folds & Mean rank \\
+\midrule
+GGT & 100.0\% & 5 & 1.4 \\
+ALT & 100.0\% & 5 & 1.6 \\
+ALP & 100.0\% & 5 & 3.4 \\
+AST & 100.0\% & 5 & 4.2 \\
+CA19-9 & 100.0\% & 5 & 5.0 \\
+Total bilirubin & 100.0\% & 5 & 5.4 \\
+Symptom duration & 100.0\% & 5 & 7.6 \\
+Total bile acid & 100.0\% & 5 & 7.6 \\
+Pain frequency & 80.0\% & 4 & 8.8 \\
+Stone location & 40.0\% & 2 & 10.0 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableSensitivity}{%
+\begin{tabular}{lcccc}
+\toprule
+Analysis & AUC & Brier & Sensitivity & Specificity \\
+\midrule
+No class weight & 0.914 & 0.081 & 0.657 & 0.971 \\
+Base RF & 0.913 & 0.089 & 0.714 & 0.946 \\
+Winsorized numeric 1-99\% & 0.913 & 0.089 & 0.714 & 0.946 \\
+Mean numeric imputation & 0.911 & 0.090 & 0.714 & 0.946 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableSubgroupPerformance}{%
+\begin{tabular}{lcccccc}
+\toprule
+Subgroup & N & PCS & AUC & Brier & Sensitivity & Specificity \\
+\midrule
+No abdominal pain & 54 & 6 & 0.951 & 0.059 & 0.500 & 1.000 \\
+High GGT & 158 & 61 & 0.920 & 0.116 & 0.803 & 0.866 \\
+Age >=60 & 157 & 40 & 0.917 & 0.101 & 0.700 & 0.923 \\
+Female & 165 & 32 & 0.917 & 0.081 & 0.656 & 0.970 \\
+Male & 146 & 38 & 0.915 & 0.097 & 0.763 & 0.917 \\
+Age <60 & 154 & 30 & 0.913 & 0.075 & 0.733 & 0.968 \\
+Abdominal pain & 257 & 64 & 0.911 & 0.094 & 0.734 & 0.933 \\
+Low GGT & 152 & 8 & 0.669 & 0.060 & 0.000 & 1.000 \\
+\bottomrule
+\end{tabular}
+}
+
+\newcommand{\TableOnsetExploration}{%
+\begin{tabular}{lcccc}
+\toprule
+Risk group & N & Median onset/rho & IQR/p & Mean risk \\
+\midrule
+Low (<10\%) & 2 & 91.5 & 59.5 & 0.079 \\
+Intermediate (10-30\%) & 8 & 76.5 & 65.2 & 0.218 \\
+High (>=30\%) & 59 & 45.0 & 82.5 & 0.729 \\
+Spearman risk vs onset & 69 & -0.007 & 0.956 & 0.651 \\
+\bottomrule
+\end{tabular}
+}
+

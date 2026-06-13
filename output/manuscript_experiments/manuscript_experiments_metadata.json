@@ -1,0 +1,16 @@
+{
+  "n": 311,
+  "pcs_positive": 70,
+  "pcs_negative": 241,
+  "bootstrap_resamples": 500,
+  "risk_thresholds": [
+    0.1,
+    0.2,
+    0.3
+  ],
+  "risk_strata": [
+    "<0.10",
+    "0.10-0.30",
+    ">=0.30"
+  ]
+}

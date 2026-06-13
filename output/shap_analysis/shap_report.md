@@ -8,7 +8,7 @@ The model was refitted on the full dataset after the same preprocessing pipeline
 
 ## Main interpretable findings
 
-- The most influential variables by aggregated mean absolute SHAP value were: GGT、ALT、AST、ALP、CA19-9、Total bilirubin.
+- The most influential variables by aggregated mean absolute SHAP value were: GGT, ALT, AST, ALP, CA19-9, Total bilirubin.
 - At the domain level, the largest contribution came from **Laboratory**, followed by the remaining clinical domains shown below.
 - The individual waterfall plot selected a high-risk PCS-positive patient with predicted PCS probability = **0.974**.
 

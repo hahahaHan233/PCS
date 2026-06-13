@@ -20,6 +20,7 @@ DATASET = ROOT / "dataset.csv"
 MODELING_SUMMARY = ROOT / "output" / "modeling" / "model_performance_summary.csv"
 OUTPUT = ROOT / "output" / "shap_analysis"
 RANDOM_STATE = 42
+PLOT_FONT = "Times New Roman"
 
 
 DISPLAY_NAMES = {
@@ -60,6 +61,21 @@ DISPLAY_NAMES = {
     "alpha_fetoprotein": "Alpha-fetoprotein",
     "ca199": "CA19-9",
 }
+
+
+def configure_plot_style() -> None:
+    plt.rcParams.update(
+        {
+            "font.family": "serif",
+            "font.serif": [PLOT_FONT],
+            "mathtext.fontset": "stix",
+            "axes.unicode_minus": False,
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
+            "figure.dpi": 150,
+            "savefig.dpi": 300,
+        }
+    )
 
 
 CLINICAL_GROUPS = {
@@ -134,6 +150,43 @@ def clean_feature_name(name: str) -> str:
     return name.replace("numeric__", "").replace("categorical__", "")
 
 
+def format_category_level(level: str) -> str:
+    replacements = {
+        "very_short": "very short",
+        "short": "short",
+        "medium": "medium",
+        "long": "long",
+        "daily": "daily",
+        "weekly": "weekly",
+        "monthly": "monthly",
+        "rare": "rare",
+        "yes": "yes",
+        "no": "no",
+        "male": "male",
+        "female": "female",
+        "gallbladder_body": "gallbladder body",
+        "gallbladder_neck": "gallbladder neck",
+        "gallbladder_fundus": "gallbladder fundus",
+        "multiple": "multiple",
+        "single": "single",
+        "unemployed": "unemployed",
+    }
+    return replacements.get(level, level.replace("_", " "))
+
+
+def display_feature_name(feature: str, numeric_cols: list[str], categorical_cols: list[str]) -> str:
+    cleaned = clean_feature_name(feature)
+    if cleaned in numeric_cols:
+        return DISPLAY_NAMES.get(cleaned, cleaned)
+    for col in sorted(categorical_cols, key=len, reverse=True):
+        prefix = f"{col}_"
+        if cleaned.startswith(prefix):
+            variable = DISPLAY_NAMES.get(col, col)
+            level = format_category_level(cleaned[len(prefix) :])
+            return f"{variable}: {level}"
+    return DISPLAY_NAMES.get(cleaned, cleaned.replace("_", " "))
+
+
 def original_variable_from_feature(feature: str, numeric_cols: list[str], categorical_cols: list[str]) -> str:
     cleaned = clean_feature_name(feature)
     if cleaned in numeric_cols:
@@ -173,9 +226,9 @@ def positive_class_shap_values(explainer: shap.TreeExplainer, x_transformed: pd.
     return values, base_value
 
 
-def save_summary_plots(shap_values: np.ndarray, x_transformed: pd.DataFrame) -> None:
+def save_summary_plots(shap_values: np.ndarray, x_display: pd.DataFrame) -> None:
     plt.figure()
-    shap.summary_plot(shap_values, x_transformed, max_display=20, show=False)
+    shap.summary_plot(shap_values, x_display, max_display=20, show=False)
     plt.title("SHAP summary plot for PCS prediction", pad=18)
     plt.tight_layout()
     plt.savefig(OUTPUT / "shap_summary_plot.png", dpi=300, bbox_inches="tight")
@@ -183,7 +236,7 @@ def save_summary_plots(shap_values: np.ndarray, x_transformed: pd.DataFrame) -> 
     plt.close()
 
     plt.figure()
-    shap.summary_plot(shap_values, x_transformed, plot_type="bar", max_display=20, show=False)
+    shap.summary_plot(shap_values, x_display, plot_type="bar", max_display=20, show=False)
     plt.title("SHAP feature importance for PCS prediction", pad=18)
     plt.tight_layout()
     plt.savefig(OUTPUT / "shap_feature_importance.png", dpi=300, bbox_inches="tight")
@@ -224,15 +277,16 @@ def save_domain_bar(variable_importance: pd.DataFrame) -> pd.DataFrame:
 
 def save_dependence_plots(
     shap_values: np.ndarray,
-    x_transformed: pd.DataFrame,
+    x_display: pd.DataFrame,
     feature_importance: pd.DataFrame,
     max_plots: int = 6,
 ) -> list[str]:
     saved = []
-    for feature in feature_importance["feature"].head(max_plots):
-        safe = feature.replace("/", "_").replace(" ", "_").replace(":", "_")
+    for _, row in feature_importance.head(max_plots).iterrows():
+        feature = row["display_feature_name"]
+        safe = row["original_variable"].replace("/", "_").replace(" ", "_").replace(":", "_")
         plt.figure()
-        shap.dependence_plot(feature, shap_values, x_transformed, show=False, interaction_index=None)
+        shap.dependence_plot(feature, shap_values, x_display, show=False, interaction_index=None)
         plt.title(f"SHAP dependence: {feature}", pad=18)
         plt.tight_layout()
         filename = f"shap_dependence_{safe}.png"
@@ -246,7 +300,7 @@ def save_dependence_plots(
 def save_waterfall_plot(
     shap_values: np.ndarray,
     base_value: float,
-    x_transformed: pd.DataFrame,
+    x_display: pd.DataFrame,
     probabilities: np.ndarray,
     y: pd.Series,
 ) -> dict[str, object]:
@@ -259,8 +313,8 @@ def save_waterfall_plot(
     explanation = shap.Explanation(
         values=shap_values[selected_idx],
         base_values=base_value,
-        data=x_transformed.iloc[selected_idx].to_numpy(),
-        feature_names=x_transformed.columns.tolist(),
+        data=x_display.iloc[selected_idx].to_numpy(),
+        feature_names=x_display.columns.tolist(),
     )
     plt.figure()
     shap.plots.waterfall(explanation, max_display=15, show=False)
@@ -359,7 +413,7 @@ def write_report(
             f"OOF Brier score = {best_model_row['OOF Brier score']:.3f})."
         )
 
-    top_names = "、".join(top_vars["display_name"].head(6).tolist())
+    top_names = ", ".join(top_vars["display_name"].head(6).tolist())
     lab_rank = domain_importance.iloc[0]["clinical_group"]
     text = f"""# SHAP Explainability Report for PCS Prediction
 
@@ -415,6 +469,7 @@ Because SHAP explains model behavior rather than biological causality, these fin
 
 
 def main() -> None:
+    configure_plot_style()
     OUTPUT.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(DATASET)
     x = df.drop(columns=["pcs"])
@@ -424,6 +479,8 @@ def main() -> None:
     x_transformed_arr = preprocessor.fit_transform(x)
     feature_names = [clean_feature_name(name) for name in preprocessor.get_feature_names_out()]
     x_transformed = pd.DataFrame(x_transformed_arr, columns=feature_names)
+    display_feature_names = [display_feature_name(name, numeric_cols, categorical_cols) for name in feature_names]
+    x_display = pd.DataFrame(x_transformed_arr, columns=display_feature_names)
 
     model = build_model()
     model.fit(x_transformed, y)
@@ -443,6 +500,9 @@ def main() -> None:
     feature_importance["original_variable"] = feature_importance["feature"].map(
         lambda f: original_variable_from_feature(f, numeric_cols, categorical_cols)
     )
+    feature_importance["display_feature_name"] = feature_importance["feature"].map(
+        lambda f: display_feature_name(f, numeric_cols, categorical_cols)
+    )
     feature_importance["display_name"] = feature_importance["original_variable"].map(
         lambda v: DISPLAY_NAMES.get(v, v)
     )
@@ -456,10 +516,10 @@ def main() -> None:
     variable_importance["clinical_group"] = variable_importance["original_variable"].map(clinical_group_for_variable)
 
     domain_importance = save_domain_bar(variable_importance)
-    save_summary_plots(shap_values, x_transformed)
+    save_summary_plots(shap_values, x_display)
     save_variable_bar(variable_importance)
-    dependence_files = save_dependence_plots(shap_values, x_transformed, feature_importance)
-    selected_patient = save_waterfall_plot(shap_values, base_value, x_transformed, probabilities, y)
+    dependence_files = save_dependence_plots(shap_values, x_display, feature_importance)
+    selected_patient = save_waterfall_plot(shap_values, base_value, x_display, probabilities, y)
     direction = feature_direction_summary(shap_values, x_transformed, feature_importance, numeric_cols)
 
     feature_importance.to_csv(OUTPUT / "shap_feature_importance.csv", index=False, encoding="utf-8-sig")

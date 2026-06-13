@@ -1,0 +1,6 @@
+﻿model,fold,Logistic Regression,Random Forest,Gradient Boosting,SVM,XGBoost,inner_oof_auc
+Weighted Soft Voting Ensemble,1,0.075,0.7,0.075,0.075,0.075,0.9311755952380952
+Weighted Soft Voting Ensemble,2,0.075,0.7,0.075,0.075,0.075,0.8974833456698742
+Weighted Soft Voting Ensemble,3,0.075,0.7,0.075,0.075,0.075,0.9335677276091784
+Weighted Soft Voting Ensemble,4,0.075,0.7,0.075,0.075,0.075,0.8902664692820135
+Weighted Soft Voting Ensemble,5,0.075,0.7,0.075,0.075,0.075,0.9111769059955588

@@ -15,6 +15,47 @@ DATASET_CSV = ROOT / "dataset.csv"
 OUTPUT = ROOT / "output"
 FIG_DIR = OUTPUT / "dataset_insights"
 
+DISPLAY_NAMES = {
+    "age": "Age",
+    "sex": "Sex",
+    "occupation": "Occupation",
+    "height_cm": "Height",
+    "weight_kg": "Weight",
+    "bmi": "BMI",
+    "education_level": "Education level",
+    "smoking": "Smoking",
+    "alcohol_use": "Alcohol use",
+    "symptom_duration": "Symptom duration",
+    "abdominal_pain": "Abdominal pain",
+    "pain_frequency": "Pain frequency",
+    "radiating_pain": "Radiating pain",
+    "gallbladder_wall_thickening": "Gallbladder wall thickening",
+    "fatty_liver": "Fatty liver",
+    "alt": "ALT",
+    "ast": "AST",
+    "alp": "ALP",
+    "ggt": "GGT",
+    "total_bilirubin": "Total bilirubin",
+    "total_bile_acid": "Total bile acid",
+    "total_cholesterol": "Total cholesterol",
+    "triglyceride": "Triglyceride",
+    "alpha_fetoprotein": "Alpha-fetoprotein",
+    "ca199": "CA19-9",
+    "pcs": "PCS",
+}
+
+
+def display_name(name: str) -> str:
+    return DISPLAY_NAMES.get(name, name.replace("_", " ").title())
+
+
+def display_level(level: object) -> str:
+    if pd.isna(level):
+        return "Missing"
+    if isinstance(level, (int, float, np.integer, np.floating)) and float(level) in (0.0, 1.0):
+        return "Yes" if int(level) == 1 else "No"
+    return str(level).replace("_", " ")
+
 
 SCHEMA = {
     "姓名": {"en": "patient_name", "role": "identifier", "include_model": False, "type": "identifier"},
@@ -169,6 +210,10 @@ def configure_plotting() -> None:
     sns.set_theme(style="whitegrid", context="paper", font_scale=1.1)
     plt.rcParams.update(
         {
+            "font.family": "serif",
+            "font.serif": ["Times New Roman"],
+            "mathtext.fontset": "stix",
+            "axes.unicode_minus": False,
             "figure.dpi": 300,
             "savefig.dpi": 300,
             "axes.spines.top": False,
@@ -183,6 +228,7 @@ def savefig(name: str) -> None:
     path = FIG_DIR / name
     plt.tight_layout()
     plt.savefig(path, bbox_inches="tight")
+    plt.savefig(path.with_suffix(".pdf"), bbox_inches="tight")
     plt.close()
 
 
@@ -204,6 +250,7 @@ def make_figures(df: pd.DataFrame, numeric_cols: list[str]) -> None:
 
     missing = df.isna().mean().sort_values(ascending=False) * 100
     missing = missing[missing > 0]
+    missing.index = [display_name(col) for col in missing.index]
     plt.figure(figsize=(7.2, max(3.2, 0.25 * len(missing))))
     ax = sns.barplot(x=missing.values, y=missing.index, color="#72B7B2")
     ax.set_xlabel("Missing values (%)")
@@ -212,6 +259,7 @@ def make_figures(df: pd.DataFrame, numeric_cols: list[str]) -> None:
     savefig("fig2_missingness_bar.png")
 
     demo = df[["pcs", "age", "bmi"]].melt(id_vars="pcs", var_name="variable", value_name="value")
+    demo["variable"] = demo["variable"].map(display_name)
     demo["PCS status"] = demo["pcs"].map({0: "No PCS", 1: "PCS"})
     plt.figure(figsize=(6.4, 3.6))
     ax = sns.boxplot(data=demo, x="variable", y="value", hue="PCS status", palette=["#4C78A8", "#E45756"], showfliers=False)
@@ -225,6 +273,7 @@ def make_figures(df: pd.DataFrame, numeric_cols: list[str]) -> None:
 
     lab_cols = ["alt", "ast", "alp", "ggt", "total_bilirubin", "total_bile_acid", "ca199"]
     labs = df[["pcs"] + lab_cols].melt(id_vars="pcs", var_name="marker", value_name="value").dropna()
+    labs["marker"] = labs["marker"].map(display_name)
     labs["PCS status"] = labs["pcs"].map({0: "No PCS", 1: "PCS"})
     labs["log1p_value"] = np.log1p(labs["value"].clip(lower=0))
     plt.figure(figsize=(9.2, 4.2))
@@ -241,9 +290,9 @@ def make_figures(df: pd.DataFrame, numeric_cols: list[str]) -> None:
         temp = df.groupby(var, dropna=False)["pcs"].agg(["mean", "count"]).reset_index()
         for _, row in temp.iterrows():
             if row["count"] >= 5:
-                rows.append({"variable": var, "level": str(row[var]), "pcs_rate": row["mean"] * 100, "n": int(row["count"])})
+                rows.append({"variable": display_name(var), "level": display_level(row[var]), "pcs_rate": row["mean"] * 100, "n": int(row["count"])})
     rates = pd.DataFrame(rows)
-    rates["label"] = rates["variable"] + "=" + rates["level"] + " (n=" + rates["n"].astype(str) + ")"
+    rates["label"] = rates["variable"] + ": " + rates["level"] + " (n=" + rates["n"].astype(str) + ")"
     rates = rates.sort_values("pcs_rate", ascending=True)
     plt.figure(figsize=(8.2, max(4.2, 0.26 * len(rates))))
     ax = sns.barplot(data=rates, x="pcs_rate", y="label", color="#F58518")
@@ -254,6 +303,7 @@ def make_figures(df: pd.DataFrame, numeric_cols: list[str]) -> None:
 
     corr_cols = [c for c in numeric_cols if df[c].notna().sum() >= 50] + ["pcs"]
     corr = df[corr_cols].corr(method="spearman")
+    corr = corr.rename(index=display_name, columns=display_name)
     plt.figure(figsize=(9.5, 7.2))
     ax = sns.heatmap(corr, cmap="vlag", center=0, square=False, linewidths=0.25, cbar_kws={"label": "Spearman r"})
     ax.set_title("Spearman correlation among numeric variables")

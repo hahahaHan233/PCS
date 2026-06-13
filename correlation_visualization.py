@@ -18,7 +18,9 @@ from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
 # 中文字体与负号
-plt.rcParams['font.sans-serif'] = ['SimHei', 'Microsoft YaHei', 'DejaVu Sans']
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['font.serif'] = ['Times New Roman', 'SimHei', 'Microsoft YaHei', 'DejaVu Serif']
+plt.rcParams['mathtext.fontset'] = 'stix'
 plt.rcParams['axes.unicode_minus'] = False
 
 # ========== 1. 读入数据与列名映射 ==========

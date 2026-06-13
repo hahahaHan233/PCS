@@ -309,7 +309,10 @@ def evaluate_symptom_task(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame,
 def configure_plots() -> None:
     plt.rcParams.update(
         {
-            "font.family": "Arial",
+            "font.family": "serif",
+            "font.serif": ["Times New Roman"],
+            "mathtext.fontset": "stix",
+            "axes.unicode_minus": False,
             "figure.dpi": 150,
             "savefig.dpi": 300,
             "axes.spines.top": False,

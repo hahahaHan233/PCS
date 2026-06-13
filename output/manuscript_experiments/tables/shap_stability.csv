@@ -1,0 +1,15 @@
+﻿feature,label,top10_frequency,folds_in_top10,mean_rank_when_top10
+ggt,GGT,1.0,5,1.4
+alt,ALT,1.0,5,1.6
+alp,ALP,1.0,5,3.4
+ast,AST,1.0,5,4.2
+ca199,CA19-9,1.0,5,5.0
+total_bilirubin,Total bilirubin,1.0,5,5.4
+symptom_duration,Symptom duration,1.0,5,7.6
+total_bile_acid,Total bile acid,1.0,5,7.6
+pain_frequency,Pain frequency,0.8,4,8.75
+stone_location,Stone location,0.4,2,10.0
+bmi,BMI,0.2,1,9.0
+age,Age,0.2,1,10.0
+alpha_fetoprotein,AFP,0.2,1,10.0
+occupation,Occupation,0.2,1,10.0

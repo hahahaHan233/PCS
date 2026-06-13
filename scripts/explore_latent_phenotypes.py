@@ -52,8 +52,8 @@ NUMERIC_PROFILE_COLS = [
 DISPLAY_NAMES = {
     "age": "Age",
     "bmi": "BMI",
-    "max_stone_diameter_mm": "Max stone diameter",
-    "common_bile_duct_diameter_mm": "CBD diameter",
+    "max_stone_diameter_mm": "Maximum stone diameter",
+    "common_bile_duct_diameter_mm": "Common bile duct diameter",
     "alt": "ALT",
     "ast": "AST",
     "alp": "ALP",
@@ -62,7 +62,7 @@ DISPLAY_NAMES = {
     "total_bile_acid": "Total bile acid",
     "total_cholesterol": "Total cholesterol",
     "triglyceride": "Triglyceride",
-    "alpha_fetoprotein": "AFP",
+    "alpha_fetoprotein": "Alpha-fetoprotein",
     "ca199": "CA19-9",
 }
 
@@ -132,7 +132,10 @@ def configure_plots() -> None:
     sns.set_theme(style="whitegrid", context="paper", font_scale=1.0)
     plt.rcParams.update(
         {
-            "font.family": "Arial",
+            "font.family": "serif",
+            "font.serif": ["Times New Roman"],
+            "mathtext.fontset": "stix",
+            "axes.unicode_minus": False,
             "figure.dpi": 150,
             "savefig.dpi": 300,
             "pdf.fonttype": 42,

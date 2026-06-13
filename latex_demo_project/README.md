@@ -5,9 +5,11 @@ This folder is an Overleaf-ready demo manuscript for the PCS machine-learning pr
 ## Files
 
 - `main.tex`: main LaTeX manuscript.
+- `tables.tex`: consolidated table bodies used by `main.tex`.
 - `references.bib`: minimal bibliography.
-- `figures/`: copied PNG figures used by the manuscript.
-- `tables/`: reserved for future standalone table files.
+- `figures/pdf/`: PDF figures used directly by `main.tex`.
+- `figures/png/`: PNG figure copies for non-LaTeX use.
+- `figures/tiff/`: TIFF figure copies for submission or publication systems.
 
 ## Compile on Overleaf
 

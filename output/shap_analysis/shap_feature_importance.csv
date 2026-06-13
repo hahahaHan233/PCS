@@ -1,58 +1,58 @@
-﻿feature,mean_abs_shap,mean_shap,rank,original_variable,display_name
-ggt,0.08247403153991116,-0.03796040705551727,1,ggt,GGT
-alt,0.07607243838442054,-0.035432910621998694,2,alt,ALT
-ast,0.04811544747055751,-0.02297836209791757,3,ast,AST
-alp,0.041985891030429684,-0.017692531796460978,4,alp,ALP
-ca199,0.03999657096110408,-0.014913171523517153,5,ca199,CA19-9
-total_bilirubin,0.03400570388349241,-0.01621284550080422,6,total_bilirubin,Total bilirubin
-total_bile_acid,0.01945642817341552,-0.011614159474892765,7,total_bile_acid,Total bile acid
-symptom_duration_very_short,0.0166185165472029,-0.003794054757694352,8,symptom_duration,Symptom duration
-pain_frequency_daily,0.012481075528454504,-0.002417942779533911,9,pain_frequency,Pain frequency
-age,0.0075495200426325265,-0.003038250407759671,10,age,Age
-alpha_fetoprotein,0.0060541564472858895,-0.002424079354842657,11,alpha_fetoprotein,Alpha-fetoprotein
-bmi,0.005879052476112265,-0.002937103687078169,12,bmi,BMI
-total_cholesterol,0.005236339135432537,-0.0034933276245234417,13,total_cholesterol,Total cholesterol
-max_stone_diameter_mm,0.004407160817145367,-0.0024076314633343825,14,max_stone_diameter_mm,Maximum stone diameter
-weight_kg,0.00438377767256833,-0.0025211192603506087,15,weight_kg,Weight
-triglyceride,0.003937013528893642,-0.0026879244480273734,16,triglyceride,Triglyceride
-occupation_unemployed,0.0037508937505046714,-0.0007404637379348249,17,occupation,Occupation
-stone_location_gallbladder_body,0.0034617375601155944,-0.0007592257677162561,18,stone_location,Stone location
-pain_frequency_monthly,0.0030259365813064053,-0.0002928195018900394,19,pain_frequency,Pain frequency
-common_bile_duct_diameter_mm,0.002296109001039611,-0.0008206887535506001,20,common_bile_duct_diameter_mm,Common bile duct diameter
-meal_related_pain,0.0020726871991761184,-0.00048240540153800563,21,meal_related_pain,Meal-related pain
-height_cm,0.0020407817799269813,-0.0015617922718759079,22,height_cm,Height
-education_level_junior_high_or_below,0.0019622609189519856,-0.00022510482505333634,23,education_level,Education level
-smoking,0.0019563577060925505,-0.0004440255203593072,24,smoking,Smoking
-symptom_duration_long,0.0015311272992294817,-8.824450283266491e-05,25,symptom_duration,Symptom duration
-pain_frequency_none,0.0012672386402913676,-0.0001528600089762598,26,pain_frequency,Pain frequency
-abdominal_pain,0.0012059802568278413,-8.554553540000872e-05,27,abdominal_pain,Abdominal pain
-stone_location_distal_common_bile_duct,0.0011335241542552912,-0.0004257982132255237,28,stone_location,Stone location
-stone_location_gallbladder_fundus,0.0010905212739458596,-0.0003004523765192371,29,stone_location,Stone location
-hyperlipidemia,0.0010887022284138744,-0.00022100211631289048,30,hyperlipidemia,Hyperlipidemia
-symptom_duration_none,0.001059405735031672,-7.967834149810255e-05,31,symptom_duration,Symptom duration
-symptom_duration_short,0.0008997531514132511,-0.0003495743912143552,32,symptom_duration,Symptom duration
-pain_frequency_weekly,0.0008243058927184084,-0.00019225116312436306,33,pain_frequency,Pain frequency
-occupation_manual_labor,0.0007866020183863908,-0.0002539533617411275,34,occupation,Occupation
-fatty_liver,0.0007605786601118466,-0.0001362015545385224,35,fatty_liver,Fatty liver
-hypertension,0.0007541988166658775,-0.00036243868091005336,36,hypertension,Hypertension
-occupation_mental_labor,0.0007040945936567498,-0.00019823321790832978,37,occupation,Occupation
-prior_abdominal_surgery,0.0006761062230359636,-7.009542953804692e-05,38,prior_abdominal_surgery,Prior abdominal surgery
-radiating_pain,0.0006746219251474059,-0.0005073728383065014,39,radiating_pain,Radiating pain
-sex_female,0.0006321440408897628,-0.0002901288383586427,40,sex,Sex
-education_level_college_or_above,0.0005190857151964947,-9.530250437502391e-05,41,education_level,Education level
-symptom_duration_medium,0.00051639263055785,-0.00018769886330798448,42,symptom_duration,Symptom duration
-sex_male,0.0005140324639564307,-0.0003514357004196981,43,sex,Sex
-diabetes,0.0005029764265288248,-2.298683388417611e-05,44,diabetes,Diabetes
-alcohol_use,0.0004259137122958606,-0.00017283857936310505,45,alcohol_use,Alcohol use
-stone_number_multiple,0.00035841833632038126,-0.00015351275574721884,46,stone_number,Stone number
-gallbladder_wall_thickening,0.0003547119458003676,-0.00011361777802634605,47,gallbladder_wall_thickening,Gallbladder wall thickening
-pain_frequency_occasional,0.00034097541702706314,-0.00012621889946753278,48,pain_frequency,Pain frequency
-stone_number_no_stone,0.00030224558320092384,-1.871869570731729e-05,49,stone_number,Stone number
-stone_location_none,0.0002766557448149821,-9.230534170926595e-05,50,stone_location,Stone location
-stone_number_single,0.00022742160137326846,-2.686206627928241e-05,51,stone_number,Stone number
-education_level_high_school,0.0001398945267678305,-7.013374781544848e-05,52,education_level,Education level
-stone_location_gallbladder_neck,3.627798824931153e-05,-2.153815709265099e-05,53,stone_location,Stone location
-stone_location_cystic_duct,0.0,0.0,54,stone_location,Stone location
-anxiety_depression,0.0,0.0,55,anxiety_depression,Anxiety/depression
-stone_location_left_intrahepatic_bile_duct,0.0,0.0,56,stone_location,Stone location
-gallbladder_atrophy,0.0,0.0,57,gallbladder_atrophy,Gallbladder atrophy
+﻿feature,mean_abs_shap,mean_shap,rank,original_variable,display_feature_name,display_name
+ggt,0.08247403153991116,-0.03796040705551727,1,ggt,GGT,GGT
+alt,0.07607243838442054,-0.035432910621998694,2,alt,ALT,ALT
+ast,0.04811544747055751,-0.02297836209791757,3,ast,AST,AST
+alp,0.041985891030429684,-0.017692531796460978,4,alp,ALP,ALP
+ca199,0.03999657096110408,-0.014913171523517153,5,ca199,CA19-9,CA19-9
+total_bilirubin,0.03400570388349241,-0.01621284550080422,6,total_bilirubin,Total bilirubin,Total bilirubin
+total_bile_acid,0.01945642817341552,-0.011614159474892765,7,total_bile_acid,Total bile acid,Total bile acid
+symptom_duration_very_short,0.0166185165472029,-0.003794054757694352,8,symptom_duration,Symptom duration: very short,Symptom duration
+pain_frequency_daily,0.012481075528454504,-0.002417942779533911,9,pain_frequency,Pain frequency: daily,Pain frequency
+age,0.0075495200426325265,-0.003038250407759671,10,age,Age,Age
+alpha_fetoprotein,0.0060541564472858895,-0.002424079354842657,11,alpha_fetoprotein,Alpha-fetoprotein,Alpha-fetoprotein
+bmi,0.005879052476112265,-0.002937103687078169,12,bmi,BMI,BMI
+total_cholesterol,0.005236339135432537,-0.0034933276245234417,13,total_cholesterol,Total cholesterol,Total cholesterol
+max_stone_diameter_mm,0.004407160817145367,-0.0024076314633343825,14,max_stone_diameter_mm,Maximum stone diameter,Maximum stone diameter
+weight_kg,0.00438377767256833,-0.0025211192603506087,15,weight_kg,Weight,Weight
+triglyceride,0.003937013528893642,-0.0026879244480273734,16,triglyceride,Triglyceride,Triglyceride
+occupation_unemployed,0.0037508937505046714,-0.0007404637379348249,17,occupation,Occupation: unemployed,Occupation
+stone_location_gallbladder_body,0.0034617375601155944,-0.0007592257677162561,18,stone_location,Stone location: gallbladder body,Stone location
+pain_frequency_monthly,0.0030259365813064053,-0.0002928195018900394,19,pain_frequency,Pain frequency: monthly,Pain frequency
+common_bile_duct_diameter_mm,0.002296109001039611,-0.0008206887535506001,20,common_bile_duct_diameter_mm,Common bile duct diameter,Common bile duct diameter
+meal_related_pain,0.0020726871991761184,-0.00048240540153800563,21,meal_related_pain,Meal-related pain,Meal-related pain
+height_cm,0.0020407817799269813,-0.0015617922718759079,22,height_cm,Height,Height
+education_level_junior_high_or_below,0.0019622609189519856,-0.00022510482505333634,23,education_level,Education level: junior high or below,Education level
+smoking,0.0019563577060925505,-0.0004440255203593072,24,smoking,Smoking,Smoking
+symptom_duration_long,0.0015311272992294817,-8.824450283266491e-05,25,symptom_duration,Symptom duration: long,Symptom duration
+pain_frequency_none,0.0012672386402913676,-0.0001528600089762598,26,pain_frequency,Pain frequency: none,Pain frequency
+abdominal_pain,0.0012059802568278413,-8.554553540000872e-05,27,abdominal_pain,Abdominal pain,Abdominal pain
+stone_location_distal_common_bile_duct,0.0011335241542552912,-0.0004257982132255237,28,stone_location,Stone location: distal common bile duct,Stone location
+stone_location_gallbladder_fundus,0.0010905212739458596,-0.0003004523765192371,29,stone_location,Stone location: gallbladder fundus,Stone location
+hyperlipidemia,0.0010887022284138744,-0.00022100211631289048,30,hyperlipidemia,Hyperlipidemia,Hyperlipidemia
+symptom_duration_none,0.001059405735031672,-7.967834149810255e-05,31,symptom_duration,Symptom duration: none,Symptom duration
+symptom_duration_short,0.0008997531514132511,-0.0003495743912143552,32,symptom_duration,Symptom duration: short,Symptom duration
+pain_frequency_weekly,0.0008243058927184084,-0.00019225116312436306,33,pain_frequency,Pain frequency: weekly,Pain frequency
+occupation_manual_labor,0.0007866020183863908,-0.0002539533617411275,34,occupation,Occupation: manual labor,Occupation
+fatty_liver,0.0007605786601118466,-0.0001362015545385224,35,fatty_liver,Fatty liver,Fatty liver
+hypertension,0.0007541988166658775,-0.00036243868091005336,36,hypertension,Hypertension,Hypertension
+occupation_mental_labor,0.0007040945936567498,-0.00019823321790832978,37,occupation,Occupation: mental labor,Occupation
+prior_abdominal_surgery,0.0006761062230359636,-7.009542953804692e-05,38,prior_abdominal_surgery,Prior abdominal surgery,Prior abdominal surgery
+radiating_pain,0.0006746219251474059,-0.0005073728383065014,39,radiating_pain,Radiating pain,Radiating pain
+sex_female,0.0006321440408897628,-0.0002901288383586427,40,sex,Sex: female,Sex
+education_level_college_or_above,0.0005190857151964947,-9.530250437502391e-05,41,education_level,Education level: college or above,Education level
+symptom_duration_medium,0.00051639263055785,-0.00018769886330798448,42,symptom_duration,Symptom duration: medium,Symptom duration
+sex_male,0.0005140324639564307,-0.0003514357004196981,43,sex,Sex: male,Sex
+diabetes,0.0005029764265288248,-2.298683388417611e-05,44,diabetes,Diabetes,Diabetes
+alcohol_use,0.0004259137122958606,-0.00017283857936310505,45,alcohol_use,Alcohol use,Alcohol use
+stone_number_multiple,0.00035841833632038126,-0.00015351275574721884,46,stone_number,Stone number: multiple,Stone number
+gallbladder_wall_thickening,0.0003547119458003676,-0.00011361777802634605,47,gallbladder_wall_thickening,Gallbladder wall thickening,Gallbladder wall thickening
+pain_frequency_occasional,0.00034097541702706314,-0.00012621889946753278,48,pain_frequency,Pain frequency: occasional,Pain frequency
+stone_number_no_stone,0.00030224558320092384,-1.871869570731729e-05,49,stone_number,Stone number: no stone,Stone number
+stone_location_none,0.0002766557448149821,-9.230534170926595e-05,50,stone_location,Stone location: none,Stone location
+stone_number_single,0.00022742160137326846,-2.686206627928241e-05,51,stone_number,Stone number: single,Stone number
+education_level_high_school,0.0001398945267678305,-7.013374781544848e-05,52,education_level,Education level: high school,Education level
+stone_location_gallbladder_neck,3.627798824931153e-05,-2.153815709265099e-05,53,stone_location,Stone location: gallbladder neck,Stone location
+stone_location_cystic_duct,0.0,0.0,54,stone_location,Stone location: cystic duct,Stone location
+anxiety_depression,0.0,0.0,55,anxiety_depression,Anxiety/depression,Anxiety/depression
+stone_location_left_intrahepatic_bile_duct,0.0,0.0,56,stone_location,Stone location: left intrahepatic bile duct,Stone location
+gallbladder_atrophy,0.0,0.0,57,gallbladder_atrophy,Gallbladder atrophy,Gallbladder atrophy

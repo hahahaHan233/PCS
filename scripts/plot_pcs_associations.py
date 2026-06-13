@@ -110,11 +110,36 @@ LAB_DISPLAY = {
 }
 
 
+def display_level(level: object) -> str:
+    if pd.isna(level):
+        return "Missing"
+    if isinstance(level, (int, float, np.integer, np.floating)) and float(level) in (0.0, 1.0):
+        return "Yes" if int(level) == 1 else "No"
+    text = str(level).replace("_", " ")
+    replacements = {
+        "very short": "very short",
+        "junior high or below": "junior high or below",
+        "college or above": "college or above",
+        "gallbladder fundus": "gallbladder fundus",
+        "gallbladder body": "gallbladder body",
+        "gallbladder neck": "gallbladder neck",
+        "cystic duct": "cystic duct",
+        "distal common bile duct": "distal common bile duct",
+        "left intrahepatic bile duct": "left intrahepatic bile duct",
+        "multiple sites": "multiple sites",
+        "no stone": "no stone",
+    }
+    return replacements.get(text, text)
+
+
 def configure_style() -> None:
     sns.set_theme(style="white", context="paper")
     mpl.rcParams.update(
         {
-            "font.family": "Arial",
+            "font.family": "serif",
+            "font.serif": ["Times New Roman"],
+            "mathtext.fontset": "stix",
+            "axes.unicode_minus": False,
             "font.size": 8,
             "axes.titlesize": 9,
             "axes.labelsize": 8,
@@ -231,8 +256,8 @@ def categorical_associations(df: pd.DataFrame) -> pd.DataFrame:
                 {
                     "variable": col,
                     "label": DISPLAY_NAMES.get(col, col),
-                    "level": level,
-                    "reference_level": reference,
+                    "level": display_level(level),
+                    "reference_level": display_level(reference),
                     "n": int(row["count"]),
                     "pcs_n": a,
                     "pcs_rate": a / row["count"] * 100,
@@ -273,7 +298,7 @@ def plot_categorical_forest(cat_df: pd.DataFrame) -> None:
     plot_df = cat_df[(cat_df["n"] >= 8) & np.isfinite(cat_df["odds_ratio"])].copy()
     plot_df = plot_df.sort_values("p_value").head(24)
     plot_df = plot_df.sort_values("odds_ratio")
-    plot_df["term"] = plot_df["label"] + ": " + plot_df["level"].astype(str) + f""
+    plot_df["term"] = plot_df["label"] + ": " + plot_df["level"].astype(str)
     y = np.arange(len(plot_df))
     fig, ax = plt.subplots(figsize=(7.4, max(4.8, 0.22 * len(plot_df))))
     xerr = np.vstack([plot_df["odds_ratio"] - plot_df["ci_low"], plot_df["ci_high"] - plot_df["odds_ratio"]])
@@ -331,7 +356,7 @@ def plot_pcs_rate_heatmap(df: pd.DataFrame) -> None:
                 rows.append(
                     {
                         "variable": DISPLAY_NAMES[var],
-                        "level": str(level),
+                        "level": display_level(level),
                         "pcs_rate": group["pcs"].mean() * 100,
                         "n": len(group),
                     }

@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.base import clone
 from sklearn.calibration import calibration_curve
 from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, StackingClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
@@ -29,6 +29,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.svm import SVC
+from sklearn.ensemble import VotingClassifier
 
 try:
     from xgboost import XGBClassifier
@@ -41,6 +42,13 @@ DATASET = ROOT / "dataset.csv"
 OUTPUT = ROOT / "output" / "modeling"
 RANDOM_STATE = 42
 N_SPLITS = 5
+ENSEMBLE_MODEL_NAMES = {
+    "Soft Voting Ensemble",
+    "Hard Voting Ensemble",
+    "Stacking Ensemble",
+    "Weighted Soft Voting Ensemble",
+}
+WEIGHTED_ENSEMBLE_BASE_NAMES = ["Logistic Regression", "Random Forest", "Gradient Boosting", "SVM", "XGBoost"]
 
 
 def make_one_hot_encoder() -> OneHotEncoder:
@@ -130,6 +138,127 @@ def build_models(y: pd.Series) -> dict[str, object]:
     return models
 
 
+def build_ensemble_models(y: pd.Series) -> dict[str, object]:
+    base = build_models(y)
+    ensemble_base_names = [name for name in WEIGHTED_ENSEMBLE_BASE_NAMES if name in base]
+
+    estimators = [(name.replace(" ", "_").lower(), clone(base[name])) for name in ensemble_base_names]
+
+    ensembles: dict[str, object] = {
+        "Soft Voting Ensemble": VotingClassifier(
+            estimators=estimators,
+            voting="soft",
+            n_jobs=-1,
+        ),
+        "Hard Voting Ensemble": VotingClassifier(
+            estimators=estimators,
+            voting="hard",
+            n_jobs=-1,
+        ),
+        "Stacking Ensemble": StackingClassifier(
+            estimators=estimators,
+            final_estimator=LogisticRegression(
+                max_iter=5000,
+                class_weight="balanced",
+                solver="liblinear",
+                random_state=RANDOM_STATE,
+            ),
+            stack_method="predict_proba",
+            cv=3,
+            n_jobs=-1,
+            passthrough=False,
+        ),
+    }
+    return ensembles
+
+
+def build_all_models(y: pd.Series) -> dict[str, object]:
+    models = build_models(y)
+    models.update(build_ensemble_models(y))
+    models["Weighted Soft Voting Ensemble"] = "weighted_soft_voting"
+    return models
+
+
+def candidate_weight_grid(n_models: int) -> list[np.ndarray]:
+    candidates: list[np.ndarray] = [np.ones(n_models) / n_models]
+    for i in range(n_models):
+        weights = np.full(n_models, 0.5 / (n_models - 1))
+        weights[i] = 0.5
+        candidates.append(weights)
+    for i in range(n_models):
+        weights = np.full(n_models, 0.3 / (n_models - 1))
+        weights[i] = 0.7
+        candidates.append(weights)
+    return candidates
+
+
+def fit_predict_weighted_soft_voting(
+    x_train: pd.DataFrame,
+    y_train: pd.Series,
+    x_test: pd.DataFrame,
+    preprocessor: ColumnTransformer,
+    base_models: dict[str, object],
+) -> tuple[np.ndarray, dict[str, float]]:
+    base_names = [name for name in WEIGHTED_ENSEMBLE_BASE_NAMES if name in base_models]
+    inner_cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=RANDOM_STATE)
+    inner_oof = np.zeros((len(x_train), len(base_names)), dtype=float)
+
+    for model_idx, model_name in enumerate(base_names):
+        estimator = base_models[model_name]
+        for inner_train_idx, inner_valid_idx in inner_cv.split(x_train, y_train):
+            pipeline = Pipeline(
+                steps=[
+                    ("preprocess", clone(preprocessor)),
+                    ("model", clone(estimator)),
+                ]
+            )
+            pipeline.fit(x_train.iloc[inner_train_idx], y_train.iloc[inner_train_idx])
+            inner_oof[inner_valid_idx, model_idx] = positive_probability_or_vote_fraction(
+                pipeline, x_train.iloc[inner_valid_idx]
+            )
+
+    best_weights = None
+    best_auc = -np.inf
+    for weights in candidate_weight_grid(len(base_names)):
+        weighted_prob = inner_oof @ weights
+        auc = roc_auc_score(y_train, weighted_prob)
+        if auc > best_auc:
+            best_auc = auc
+            best_weights = weights
+
+    assert best_weights is not None
+    test_probs = []
+    for model_name in base_names:
+        pipeline = Pipeline(
+            steps=[
+                ("preprocess", clone(preprocessor)),
+                ("model", clone(base_models[model_name])),
+            ]
+        )
+        pipeline.fit(x_train, y_train)
+        test_probs.append(positive_probability_or_vote_fraction(pipeline, x_test))
+    test_matrix = np.column_stack(test_probs)
+    weights_dict = {name: float(weight) for name, weight in zip(base_names, best_weights)}
+    weights_dict["inner_oof_auc"] = float(best_auc)
+    return test_matrix @ best_weights, weights_dict
+
+
+def positive_probability_or_vote_fraction(pipeline: Pipeline, x_test: pd.DataFrame) -> np.ndarray:
+    model = pipeline.named_steps["model"]
+    if hasattr(model, "predict_proba"):
+        try:
+            return pipeline.predict_proba(x_test)[:, 1]
+        except AttributeError:
+            pass
+
+    transformed = pipeline.named_steps["preprocess"].transform(x_test)
+    if isinstance(model, VotingClassifier) and model.voting == "hard":
+        member_predictions = np.column_stack([est.predict(transformed) for est in model.estimators_])
+        return member_predictions.mean(axis=1)
+
+    return pipeline.predict(x_test).astype(float)
+
+
 def specificity_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:
     tn, fp, _, _ = confusion_matrix(y_true, y_pred, labels=[0, 1]).ravel()
     return tn / (tn + fp) if (tn + fp) else np.nan
@@ -150,26 +279,41 @@ def fold_metrics(y_true: np.ndarray, y_prob: np.ndarray, threshold: float = 0.5)
 
 
 def cross_validate_models(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, np.ndarray]]:
+    OUTPUT.mkdir(parents=True, exist_ok=True)
     x = df.drop(columns=["pcs"])
     y = df["pcs"].astype(int)
     preprocessor = build_preprocessor(df)
-    models = build_models(y)
+    models = build_all_models(y)
     cv = StratifiedKFold(n_splits=N_SPLITS, shuffle=True, random_state=RANDOM_STATE)
 
     fold_rows: list[dict[str, object]] = []
+    weight_rows: list[dict[str, object]] = []
     oof_predictions: dict[str, np.ndarray] = {}
 
     for model_name, estimator in models.items():
         oof_prob = np.zeros(len(df), dtype=float)
         for fold_id, (train_idx, test_idx) in enumerate(cv.split(x, y), start=1):
-            pipeline = Pipeline(
-                steps=[
-                    ("preprocess", clone(preprocessor)),
-                    ("model", clone(estimator)),
-                ]
-            )
-            pipeline.fit(x.iloc[train_idx], y.iloc[train_idx])
-            prob = pipeline.predict_proba(x.iloc[test_idx])[:, 1]
+            if model_name == "Weighted Soft Voting Ensemble":
+                base_models = build_models(y.iloc[train_idx])
+                prob, weights = fit_predict_weighted_soft_voting(
+                    x.iloc[train_idx],
+                    y.iloc[train_idx],
+                    x.iloc[test_idx],
+                    preprocessor,
+                    base_models,
+                )
+                weight_row = {"model": model_name, "fold": fold_id}
+                weight_row.update(weights)
+                weight_rows.append(weight_row)
+            else:
+                pipeline = Pipeline(
+                    steps=[
+                        ("preprocess", clone(preprocessor)),
+                        ("model", clone(estimator)),
+                    ]
+                )
+                pipeline.fit(x.iloc[train_idx], y.iloc[train_idx])
+                prob = positive_probability_or_vote_fraction(pipeline, x.iloc[test_idx])
             oof_prob[test_idx] = prob
             row = {"model": model_name, "fold": fold_id}
             row.update(fold_metrics(y.iloc[test_idx].to_numpy(), prob))
@@ -178,6 +322,8 @@ def cross_validate_models(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame,
         oof_predictions[model_name] = oof_prob
 
     fold_df = pd.DataFrame(fold_rows)
+    if weight_rows:
+        pd.DataFrame(weight_rows).to_csv(OUTPUT / "ensemble_weight_tuning.csv", index=False, encoding="utf-8-sig")
     summary_rows = []
     for model_name, group in fold_df.groupby("model", sort=False):
         oof = oof_predictions[model_name]
@@ -213,7 +359,10 @@ def cross_validate_models(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame,
 def configure_plots() -> None:
     plt.rcParams.update(
         {
-            "font.family": "Arial",
+            "font.family": "serif",
+            "font.serif": ["Times New Roman"],
+            "mathtext.fontset": "stix",
+            "axes.unicode_minus": False,
             "axes.spines.top": False,
             "axes.spines.right": False,
             "figure.dpi": 150,
@@ -305,7 +454,7 @@ def plot_dca(y: pd.Series, oof_predictions: dict[str, np.ndarray], path: Path) -
     plt.xlabel("Threshold probability")
     plt.ylabel("Net benefit")
     plt.title("Decision curve analysis based on cross-validated predictions")
-    plt.legend(loc="upper right", fontsize=8)
+    plt.legend(loc="lower left", fontsize=8)
     plt.tight_layout()
     save_plot(path)
     plt.close()
@@ -418,6 +567,28 @@ def write_markdown_report(summary_df: pd.DataFrame, metadata: dict[str, object])
 
     table = markdown_table(report_rows)
     best = summary_df.iloc[0]
+    ensemble_names = ["Soft Voting Ensemble", "Hard Voting Ensemble", "Stacking Ensemble", "Weighted Soft Voting Ensemble"]
+    ensemble_df = summary_df.loc[summary_df["model"].isin(ensemble_names)].copy()
+    base_df = summary_df.loc[~summary_df["model"].isin(ensemble_names)].copy()
+    best_base = base_df.sort_values(["OOF AUC", "OOF Brier score"], ascending=[False, True]).iloc[0]
+    best_ensemble_auc = ensemble_df.sort_values(["OOF AUC", "OOF Brier score"], ascending=[False, True]).iloc[0]
+    best_ensemble_brier = ensemble_df.sort_values(["OOF Brier score", "OOF AUC"], ascending=[True, False]).iloc[0]
+    auc_delta = best_ensemble_auc["OOF AUC"] - best_base["OOF AUC"]
+    brier_delta = best_ensemble_brier["OOF Brier score"] - best_base["OOF Brier score"]
+    ensemble_rows = []
+    for _, row in ensemble_df.sort_values("OOF AUC", ascending=False).iterrows():
+        ensemble_rows.append(
+            {
+                "Ensemble": row["model"],
+                "OOF AUC": f"{row['OOF AUC']:.3f}",
+                "OOF AP": f"{row['OOF average precision']:.3f}",
+                "OOF Brier": f"{row['OOF Brier score']:.3f}",
+                "Sensitivity": f"{row['Sensitivity mean']:.3f}",
+                "Specificity": f"{row['Specificity mean']:.3f}",
+                "F1": f"{row['F1 mean']:.3f}",
+            }
+        )
+    ensemble_table = markdown_table(ensemble_rows)
     text = f"""# PCS Machine Learning Model Report
 
 ## Dataset and validation
@@ -438,6 +609,21 @@ def write_markdown_report(summary_df: pd.DataFrame, metadata: dict[str, object])
 The top-ranked model by out-of-fold AUC is **{best["model"]}** with OOF AUC = **{best["OOF AUC"]:.3f}**, OOF average precision = **{best["OOF average precision"]:.3f}**, and OOF Brier score = **{best["OOF Brier score"]:.3f}**.
 
 Because PCS prevalence is imbalanced, the report emphasizes sensitivity, precision-recall performance, calibration, and decision curve analysis in addition to AUC.
+
+## Ensemble architecture validation
+
+Four ensemble strategies were evaluated under the same 5-fold out-of-fold validation protocol:
+
+- **Soft Voting Ensemble**: averages predicted probabilities from Logistic Regression, Random Forest, Gradient Boosting, SVM, and XGBoost.
+- **Hard Voting Ensemble**: uses the fraction of positive votes as the risk score.
+- **Stacking Ensemble**: uses a logistic meta-learner trained from base-model probability outputs within the training folds.
+- **Weighted Soft Voting Ensemble**: searches model weights inside each outer training fold using 3-fold inner out-of-fold AUC, then applies the selected weights to the outer validation fold.
+
+{ensemble_table}
+
+The best single base model was **{best_base["model"]}** with OOF AUC = **{best_base["OOF AUC"]:.3f}** and OOF Brier score = **{best_base["OOF Brier score"]:.3f}**. The highest-AUC ensemble was **{best_ensemble_auc["model"]}** with OOF AUC = **{best_ensemble_auc["OOF AUC"]:.3f}** (delta vs. best base model = **{auc_delta:+.3f}**). The best-calibrated ensemble by Brier score was **{best_ensemble_brier["model"]}** with OOF Brier score = **{best_ensemble_brier["OOF Brier score"]:.3f}** (delta vs. best base model = **{brier_delta:+.3f}**).
+
+Interpretation: the optimized weighted soft-voting ensemble approached but did **not** exceed the best Random Forest model in discrimination. It improved average precision and Brier score, suggesting modest benefit for probability quality rather than AUC. Therefore, the ensemble can be presented as an architecture validation experiment rather than the final preferred model.
 
 ## Curves
 

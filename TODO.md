@@ -1,431 +1,313 @@
 # PCS 医学期刊论文项目 TODO
 
-> 项目主题：基于多源临床数据构建胆囊切除术后综合征（post-cholecystectomy syndrome, PCS）发生风险预测模型，并结合可解释机器学习用于风险因素识别和临床风险分层。
+最后更新：2026-06-13
 
-## 0. 当前项目状态
+项目主题：基于多源术前/围手术期临床数据构建胆囊切除术后综合征（post-cholecystectomy syndrome, PCS）发生风险预测模型，并结合 SHAP 可解释机器学习、校准评价、决策曲线分析和风险分层，服务于 PCS 高风险患者识别和个体化随访。
+
+## 0. 当前总览
+
+### 已完成
 
 - [x] 原始数据已整理为 `dataset.csv`
-- [x] 当前样本量：311 例
-- [x] 结局变量：是否发生 PCS
-- [x] PCS 阳性：70 例；PCS 阴性：241 例；发生率约 22.5%
+- [x] 样本量确认：311 例
+- [x] PCS 阳性：70 例
+- [x] PCS 阴性：241 例
+- [x] PCS 发生率：22.5%
+- [x] 已排除身份识别变量：姓名、住院号
+- [x] 已排除结局后变量：PCS 发生时间、PCS 症状类型
 - [x] 已生成数据字典：`output/dataset_schema_mapping.csv`
-- [x] 已生成描述统计输出：`output/dataset_numeric_summary.csv`、`output/dataset_categorical_summary.csv`
-- [x] 已生成初步数据可视化：`output/dataset_insights/`
-- [x] 已生成 PCS 相关性探索图表和统计表：`output/pcs_association_figures/`
-- [ ] 完成正式论文用基线表
-- [ ] 完成单因素和多因素 Logistic 回归
-- [x] 完成机器学习模型训练、验证和性能比较
-- [x] 完成 SHAP 可解释性分析
-- [x] 完成校准曲线、决策曲线分析
-- [x] 补充 PCS 症状类型文本标签化和症状发生类别预测任务
-- [ ] 完成风险分层
-- [x] 补充无监督降维、聚类与潜在 PCS 表型探索
+- [x] 已生成描述统计：`output/dataset_numeric_summary.csv`
+- [x] 已生成分类变量统计：`output/dataset_categorical_summary.csv`
+- [x] 已生成数据探索图：`output/dataset_insights/`
+- [x] 已生成 PCS 关联探索图表：`output/pcs_association_figures/`
+- [x] 已完成机器学习模型训练和 5 折分层交叉验证
+- [x] 已完成 ROC、PR、校准曲线、Brier score 和 DCA
+- [x] 已完成 voting / stacking / weighted voting 集成架构验证
+- [x] 已完成 SHAP 可解释性分析
+- [x] 已完成 PCS 症状类型文本标签化
+- [x] 已完成 PCS 阳性人群内症状亚型预测探索
+- [x] 已完成 PCA、t-SNE、K-means 潜在表型探索
+- [x] 已建立 LaTeX demo 项目并插入主要 PDF 图件
+- [x] 已更新 `README.md` 为当前项目主页
+
+### 仍未完成
+
+- [ ] 明确 PCS 诊断标准、判定来源和随访时间窗
+- [ ] 明确纳入标准、排除标准、研究类型和病例筛选流程
+- [ ] 明确伦理审批编号或伦理豁免说明
+- [x] 完成正式 Table 1：PCS 组与非 PCS 组基线特征
+- [x] 完成单因素和多因素 Logistic 回归
+- [x] 完成风险分层实验
+- [x] 完成内部稳健性验证：bootstrap 或重复交叉验证
+- [x] 完成特征组消融实验
 - [ ] 完成论文初稿、图表编号和投稿格式整理
 
-## 1. 整体处理工作流
+## 1. 当前核心结果
 
-### 1.1 数据核查与数据字典
+- [x] 建模变量数：36 个术前/围手术期变量
+- [x] 当前最佳主模型：Random Forest
+- [x] Random Forest OOF AUC：0.917
+- [x] Random Forest OOF average precision：0.842
+- [x] Random Forest OOF Brier score：0.088
+- [x] Random Forest OOF confusion matrix：TN=228, FP=13, FN=20, TP=50
+- [x] Weighted soft voting OOF AUC：0.915，接近但未超过 Random Forest
+- [x] Soft voting OOF Brier score：0.080，概率校准质量较好
+- [x] SHAP top 变量：GGT、ALT、AST、ALP、CA19-9、总胆红素、症状持续时间、总胆汁酸、疼痛频率、年龄
+- [x] SHAP 领域贡献最高：Laboratory，其次为 Symptoms
+- [x] 症状亚型预测效果较弱，当前应作为探索性补充分析
+- [x] 潜在表型聚类 silhouette score = 0.219，应作为 hypothesis-generating analysis
 
-- [x] 明确纳入建模数据中的变量：人口学、生活方式、临床症状、既往病史、影像学特征、实验室指标和 PCS 结局
-- [x] 排除身份识别变量：姓名、住院号
-- [x] 排除结局后变量：PCS 发生时间、PCS 症状类型
-- [ ] 核对原始 Excel 中所有中文变量名、英文变量名和临床含义是否一致
-- [ ] 补充每个变量的单位、取值范围和临床参考范围
-- [ ] 明确 PCS 的诊断标准、判定来源和随访时间窗
-- [ ] 明确 PCS 发生时间的单位，以及是否只用于描述性分析
-- [ ] 明确 PCS 症状类型是否允许多标签记录
-- [ ] 明确纳入标准、排除标准和病例筛选流程
-- [ ] 输出正式数据字典表，供论文 Supplementary Table 使用
+## 2. P0：投稿前必须补齐
 
-### 1.2 数据清洗与预处理
+这些任务直接决定医学审稿人是否认为研究可信。
 
-- [x] 生成缺失值概览图：`fig2_missingness_bar.png`
-- [x] 生成数值型变量和分类变量描述统计
-- [ ] 逐项核查缺失比例较高变量，决定删除、插补或保留原始缺失
-- [ ] 核查 ALT、AST、ALP、GGT、胆红素、胆汁酸、CA19-9 等实验室指标的极端值
-- [ ] 根据临床参考范围或箱线图/IQR 方法标记可能异常值
-- [ ] 明确异常值处理原则：保留、截尾、winsorize 或敏感性分析
-- [ ] 对分类变量进行规范编码，并保留原始中文标签和英文建模标签的映射
-- [ ] 对连续变量进行建模前标准化或归一化
-- [ ] 建立可复现的预处理 pipeline，避免训练集和测试集之间数据泄漏
-
-### 1.3 描述性统计与组间比较
-
-- [x] 已完成 PCS 与非 PCS 组的初步非参数比较
-- [x] 初步提示与 PCS 相关较强的连续变量包括 GGT、ALT、ALP、AST、CA19-9、总胆红素、总胆汁酸等
-- [x] 初步提示与 PCS 相关的分类变量包括症状持续时间、疼痛频率、腹痛、结石位置等
-- [ ] 生成正式 Table 1：PCS 组与非 PCS 组基线特征比较
-- [ ] 连续变量根据分布报告为 mean ± SD 或 median (IQR)
-- [ ] 分类变量报告 n (%)
-- [ ] 根据变量分布选择 t 检验、Mann-Whitney U 检验、卡方检验或 Fisher 精确检验
-- [ ] 对多重比较结果说明是否进行 FDR 校正
-- [ ] 输出：`output/baseline_table.xlsx`
-
-### 1.4 传统统计建模
-
-- [ ] 完成单因素 Logistic 回归
-- [ ] 报告每个候选变量的 OR、95% CI 和 P 值
-- [ ] 根据临床意义和单因素结果筛选多因素模型候选变量
-- [ ] 检查多重共线性，尤其是 ALT、AST、ALP、GGT、胆红素和胆汁酸之间的相关性
-- [ ] 完成多因素 Logistic 回归
-- [ ] 报告独立危险因素及其临床解释
-- [ ] 输出：`output/logistic_regression_results.xlsx`
-- [ ] 讨论 Logistic 回归与机器学习模型的角色差异：解释危险因素 vs 提升预测性能
-
-### 1.5 机器学习模型构建
-
-- [x] 明确建模任务：二分类预测 PCS 发生
-- [x] 进行训练集/测试集划分，建议使用分层抽样
-- [x] 考虑重复交叉验证或 bootstrap 内部验证
-- [x] 建立基线模型：Logistic Regression
-- [x] 建立非线性模型：Random Forest
-- [x] 建立梯度提升模型：XGBoost 或 LightGBM
-- [x] 可选比较模型：SVM、KNN、Naive Bayes
-- [x] 针对 PCS 阳性比例约 22.5% 的类别不平衡问题，比较 class_weight、阈值调整或重采样策略
-- [ ] 使用训练集进行调参，测试集只用于最终评估
-- [x] 记录随机种子、软件版本和参数设置，保证可复现
-
-### 1.6 模型评价
-
-- [x] 输出各模型 AUC
-- [x] 输出 Accuracy、Sensitivity、Specificity、Precision、F1-score
-- [x] 输出混淆矩阵
-- [x] 绘制 ROC 曲线：`output/modeling/roc_curve.png`
-- [x] 绘制 PR 曲线，可选：`output/modeling/pr_curve.png`
-- [x] 绘制校准曲线：`output/modeling/calibration_curve.png`
-- [x] 计算 Brier score
-- [x] 完成决策曲线分析（DCA）：`output/modeling/dca_curve.png`
-- [x] 输出模型性能汇总表：`output/modeling/model_performance.xlsx`
-- [x] 选择最佳模型时同时考虑 AUC、敏感度、校准度和临床净获益
-
-### 1.7 SHAP 可解释性分析
-
-- [x] 对最佳机器学习模型进行 SHAP 分析
-- [x] 输出 SHAP summary plot：`output/shap_analysis/shap_summary_plot.png`
-- [x] 输出 SHAP feature importance bar plot：`output/shap_analysis/shap_feature_importance.png`
-- [x] 对关键变量绘制 SHAP dependence plot
-- [x] 重点解释 GGT、ALT、ALP、AST、总胆红素、总胆汁酸、CA19-9、症状持续时间、疼痛频率等变量
-- [x] 选择 1-2 个典型高风险病例做 waterfall/force plot：`output/shap_analysis/shap_single_patient_waterfall.png`
-- [x] 将 SHAP 结果转化为临床语言，避免只描述算法图形
-
-### 1.8 风险分层与临床转化
-
-- [ ] 根据最佳模型预测概率确定低、中、高风险阈值
-- [ ] 比较不同风险层的实际 PCS 发生率
-- [ ] 输出风险分层表：`output/risk_stratification.xlsx`
-- [ ] 绘制风险分层柱状图或热图
-- [ ] 给出初步临床建议：低风险常规随访，中风险加强宣教和症状监测，高风险重点随访和早期干预
-- [ ] 在讨论中强调该分层策略仍需外部验证
-
-### 1.9 代码、结果和复现
-
-- [ ] 整理脚本命名，使其对应论文分析流程
-- [ ] 新增 `scripts/build_baseline_table.py`
-- [ ] 新增 `scripts/run_logistic_regression.py`
-- [x] 新增 `scripts/train_ml_models.py`
-- [x] 新增 `scripts/explain_best_model_shap.py`
-- [x] 新增 `scripts/build_pcs_symptom_task.py`
-- [ ] 新增 `scripts/risk_stratification.py`
-- [x] 统一所有输出路径到 `output/`
-- [x] 将关键表格保存为 xlsx/csv，关键图片保存为 png/pdf
-- [ ] 在 README 中补充一键运行说明
-
-### 1.10 PCS 症状类型标签化与补充预测任务
-
-- [x] 从原始 Excel 中抽取 `PCS症状类型` 自由文本字段
-- [x] 将原始文本转化为结构化标签：腹痛、便秘、胃肠功能紊乱、消化不良、肠道菌群失调、慢性胃炎、腹胀
-- [x] 合并为适合建模的症状发生类别：`no_pcs`、`pain`、`constipation`、`gi_dysfunction_dyspepsia`
-- [x] 对 PCS 阳性但症状文本缺失者标记为 `pcs_unknown`
-- [x] 输出症状标签数据集：`output/pcs_symptom_task/pcs_symptom_labeled_dataset.csv`
-- [x] 输出标签映射表：`output/pcs_symptom_task/pcs_symptom_label_mapping.csv`
-- [x] 构建补充预测任务：PCS 阳性人群内症状亚型多分类预测
-- [x] 使用 5 折分层交叉验证比较多种模型
-- [x] 输出性能报告：`output/pcs_symptom_task/pcs_symptom_prediction_report.md`
-- [x] 输出类别分布、混淆矩阵和 one-vs-rest ROC 曲线
-- [ ] 在论文 Methods 中说明该任务为探索性补充分析，且 `no_pcs` 不纳入症状亚型分类指标计算
-- [ ] 在 Discussion 中讨论症状亚型样本量小和类别不平衡带来的不确定性
-
-### 1.11 无监督降维、聚类与潜在 PCS 表型探索
-
-- [x] 新增 `scripts/explore_latent_phenotypes.py`
-- [x] 基于术前/围手术期预测变量建立统一预处理 pipeline
-- [x] 输出 PCA 二维可视化，按 PCS 状态着色
-- [x] 输出 t-SNE 或 UMAP 二维可视化，按 PCS 状态着色
-- [x] 在 PCS 阳性患者中输出降维图，按症状亚型着色
-- [x] 进行 K-means 或层次聚类，探索潜在临床表型
-- [x] 输出 cluster heatmap，展示各潜在表型的关键变量模式
-- [x] 统计不同 cluster 的 PCS 发生率
-- [x] 统计不同 cluster 中 PCS 症状亚型分布
-- [x] 统计不同 cluster 的 PCS 发生时间或 burden proxy 差异
-- [x] 输出 `output/latent_phenotypes/latent_phenotype_report.md`
-- [ ] 在论文中明确该部分为 exploratory / hypothesis-generating analysis
-
-### 1.12 图表输出与 LaTeX 规范
-
-- [x] 后续所有模型曲线、SHAP 图、聚类图和论文主图优先导出 PDF 矢量或高分辨率 PDF
-- [x] PNG 仅作为预览或备用格式保存
-- [x] LaTeX 项目中插入 PDF 图件，而不是 PNG 图件
-- [x] 将 `latex_demo_project/figures/` 中的现有 PNG 图替换或补充为 PDF
-- [x] 更新 `latex_demo_project/main.tex` 中的图像引用，使正式版本使用 PDF
-- [x] 统一图件命名规则：`fig_main_pipeline.pdf`、`fig_roc.pdf`、`fig_shap_summary.pdf` 等
-- [x] 统一图注中说明图件来源：cross-validated OOF predictions、SHAP final model、exploratory clustering 等
-
-## 2. 论文各 Section 待完成事项
-
-### 2.1 Title
-
-- [ ] 确定论文题目，建议突出 PCS、机器学习、风险预测和可解释性
-- [ ] 备选题目 1：基于机器学习的胆囊切除术后综合征发生风险预测模型构建及可解释性分析
-- [ ] 备选题目 2：融合多源临床数据的胆囊切除术后综合征风险分层模型构建与 SHAP 解释研究
-- [ ] 备选题目 3：胆囊疾病患者术后 PCS 发生的危险因素分析及智能预测模型研究
-- [ ] 根据目标期刊风格确定中文题目、英文题目和短标题
-
-### 2.2 Abstract
-
-- [ ] 背景：说明 PCS 的临床负担和术前/围手术期风险识别需求
-- [ ] 目的：构建并验证 PCS 发生风险预测模型，识别关键预测因素
-- [ ] 方法：说明研究设计、样本量、变量来源、统计分析、机器学习模型、SHAP 和模型评价指标
-- [ ] 结果：填入 PCS 发生率、最佳模型 AUC、敏感度、特异度、校准度、DCA 结果和关键变量
-- [ ] 结论：说明模型对个体化随访和风险分层的潜在价值
-- [ ] 补充关键词：post-cholecystectomy syndrome、machine learning、risk prediction、SHAP、clinical prediction model
-
-### 2.3 Introduction
-
-- [ ] 介绍胆囊切除术后 PCS 的定义、常见症状和发生率
-- [ ] 说明 PCS 对生活质量、随访负担和医疗资源使用的影响
-- [ ] 总结现有研究多集中于症状描述、发生率和传统危险因素分析
-- [ ] 指出当前缺口：缺乏面向 PCS 的术前或围手术期个体化风险预测工具
-- [ ] 引出机器学习适合处理多维临床变量和非线性关系
-- [ ] 引出 SHAP 在医学 AI 模型透明化和临床可解释性中的价值
-- [ ] 明确本研究目的和创新点
-
-### 2.4 Methods - Study Design and Population
+### 2.1 临床研究定义
 
 - [ ] 明确研究类型：回顾性队列研究或回顾性病例对照研究
-- [ ] 说明数据来源医院、时间范围和病例筛选流程
-- [ ] 写清纳入标准
-- [ ] 写清排除标准
-- [ ] 说明伦理审批编号或伦理豁免情况
-- [ ] 说明是否获得知情同意豁免
-- [ ] 绘制病例筛选流程图，可作为 Figure 1
+- [ ] 明确数据来源医院、时间范围和病例筛选流程
+- [ ] 明确纳入标准
+- [ ] 明确排除标准
+- [ ] 明确 PCS 诊断标准
+- [ ] 明确 PCS 判定来源：门诊记录、随访记录、电话随访、再入院记录或其他来源
+- [ ] 明确 PCS 判定时间窗
+- [ ] 明确 `PCS发生时间` 的单位，当前按天处理
+- [ ] 明确 `PCS症状类型` 是否允许多标签
+- [ ] 明确伦理审批编号或伦理豁免信息
+- [ ] 明确是否获得知情同意豁免
+- [ ] 绘制病例筛选流程图，作为 Figure 1
 
-### 2.5 Methods - Outcome Definition
+### 2.2 正式 Table 1
 
-- [ ] 明确 PCS 的诊断标准
-- [ ] 明确 PCS 是否由门诊记录、随访记录、再入院记录或电话随访确定
-- [ ] 明确 PCS 判定的时间窗
-- [ ] 说明 PCS 发生时间和症状类型为何不作为预测变量
-- [ ] 如有多个症状，说明症状分类规则
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 输出：`output/manuscript_experiments/manuscript_experiment_results.xlsx`
+- [x] 输出：`output/manuscript_experiments/tables/baseline_table.csv`
+- [x] 连续变量根据分布报告 median (IQR)
+- [x] 分类变量报告 n (%)
+- [x] 根据分布选择 Mann-Whitney U 检验
+- [x] 分类变量选择卡方检验或 Fisher 精确检验
+- [x] 报告 PCS 组与非 PCS 组差异
+- [x] 输出 FDR 校正结果
+- [x] 在 LaTeX PDF 中插入 condensed Table 1
 
-### 2.6 Methods - Predictors
+### 2.3 Logistic 回归
 
-- [ ] 按类别描述候选预测变量
-- [ ] 人口学资料：年龄、性别、职业、身高、体重、BMI、教育水平
-- [ ] 生活方式：吸烟、饮酒
-- [ ] 临床症状：症状持续时间、腹痛、疼痛频率、放射痛、进食相关疼痛
-- [ ] 既往病史：高血压、高血脂、糖尿病、焦虑/抑郁、既往腹部手术史
-- [ ] 影像学特征：胆囊壁增厚、最大结石直径、结石数量、结石位置、胆总管直径、脂肪肝、胆囊萎缩
-- [ ] 实验室指标：ALT、AST、ALP、GGT、总胆红素、总胆汁酸、总胆固醇、甘油三酯、甲胎蛋白、CA19-9
-- [ ] 说明变量采集时间点：术前、入院时或围手术期
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 输出：`output/manuscript_experiments/tables/univariate_logistic.csv`
+- [x] 输出：`output/manuscript_experiments/tables/multivariable_logistic.csv`
+- [x] 完成单因素 Logistic 回归
+- [x] 报告 OR、95% CI 和 P 值
+- [x] 根据临床意义和 SHAP top 变量筛选多因素模型候选变量
+- [x] 检查多重共线性，尤其是 ALT、AST、ALP、GGT、总胆红素、总胆汁酸、CA19-9
+- [x] 完成多因素 Logistic 回归
+- [x] 报告独立危险因素
+- [x] 将 Logistic 回归结果与 SHAP top 变量对照
+- [x] 形成论文 Table 2 并插入 LaTeX PDF
 
-### 2.7 Methods - Missing Data and Preprocessing
+### 2.4 风险分层
 
-- [ ] 报告缺失值比例
-- [ ] 说明缺失值处理策略
-- [ ] 说明连续变量异常值处理策略
-- [ ] 说明分类变量编码方式
-- [ ] 说明连续变量标准化方式
-- [ ] 说明训练/测试划分和交叉验证策略
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 使用 OOF 预测概率进行风险分层，避免乐观偏倚
+- [x] 确定低/中/高风险阈值：<10%、10-30%、>=30%
+- [x] 比较不同风险层的实际 PCS 发生率
+- [x] 报告各风险层人数、PCS 例数和 PCS 发生率
+- [x] 报告 PPV、Sensitivity、Specificity 等阈值指标
+- [x] 输出：`output/manuscript_experiments/tables/risk_stratification.csv`
+- [x] 输出：`output/manuscript_experiments/tables/clinical_threshold_table.csv`
+- [x] 绘制风险分层柱状图
+- [x] 形成论文 Table 4
+- [x] 形成论文 Figure 7
+- [x] 在 LaTeX PDF 中说明风险分层仍需外部验证
+
+### 2.5 报告规范
+
+- [ ] 按 TRIPOD/TRIPOD+AI 检查报告完整性
+- [ ] 报告缺失值比例和处理策略
+- [ ] 报告所有模型超参数
+- [ ] 报告 Python、scikit-learn、xgboost、shap 等软件版本
 - [ ] 说明如何避免数据泄漏
+- [ ] 说明最终模型选择原则：AUC、校准、DCA、临床可解释性共同考虑
+- [ ] 明确当前仅为内部验证，不能直接用于临床部署
 
-### 2.8 Methods - Statistical Analysis
+## 3. P1：提高论文贡献和接受概率的补强实验
 
-- [ ] 说明连续变量分布判断方法
-- [ ] 说明组间比较检验方法
-- [ ] 说明单因素 Logistic 回归方法
-- [ ] 说明多因素 Logistic 回归变量筛选原则
-- [ ] 说明 OR、95% CI 和 P 值报告规范
-- [ ] 说明显著性阈值和多重比较处理
-- [ ] 说明使用的软件和版本
+这些任务不一定是投稿最低要求，但能明显提升“医学 + 计算机交叉”论文的质量。
 
-### 2.9 Methods - Machine Learning and Model Evaluation
+### 3.1 Bootstrap 或重复交叉验证
 
-- [x] 描述候选模型及选择原因
-- [ ] 描述超参数调优方法
-- [x] 描述类别不平衡处理方法
-- [x] 描述性能指标：AUC、Accuracy、Sensitivity、Specificity、Precision、F1-score、Brier score
-- [x] 描述 ROC、校准曲线和 DCA
-- [ ] 描述最终模型选择原则
-- [ ] 按 TRIPOD/TRIPOD+AI 规范补齐模型报告信息
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 对主模型进行 500 次 bootstrap 内部验证
+- [x] 报告 AUC 的 95% CI
+- [x] 报告 Brier score 的 95% CI
+- [x] 报告 calibration intercept
+- [x] 报告 calibration slope
+- [x] 输出 optimism-corrected performance
+- [x] 输出：`output/manuscript_experiments/tables/bootstrap_summary.csv`
 
-### 2.10 Methods - Explainability and Risk Stratification
+### 3.2 特征组消融实验
 
-- [x] 描述 SHAP 的用途和分析对象
-- [x] 说明 summary plot、importance plot、dependence plot 和 individual explanation 的解释方式
-- [ ] 说明风险分层阈值来源
-- [ ] 说明如何比较不同风险层的实际 PCS 发生率
-- [ ] 描述 PCS 症状类型自由文本标签化和 PCS 阳性人群内补充多分类预测任务
-- [x] 描述无监督降维、聚类和潜在表型探索方法
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 构建仅人口学变量模型
+- [x] 构建仅症状变量模型
+- [x] 构建仅影像变量模型
+- [x] 构建仅实验室指标模型
+- [x] 构建症状 + 实验室模型
+- [x] 构建全部变量模型
+- [x] 比较 AUC、AP、Brier、Sensitivity、Specificity、F1
+- [x] 证明实验室与症状+实验室特征携带主要预测信号
+- [x] 输出：`output/manuscript_experiments/tables/feature_ablation.csv`
+- [x] 绘制消融实验性能柱状图并插入 LaTeX PDF
 
-### 2.11 Results - Cohort Characteristics
+### 3.3 阈值决策表
 
-- [ ] 报告总样本量、PCS 阳性数、PCS 阴性数和发生率
-- [ ] 报告 Table 1 基线特征
-- [ ] 描述 PCS 组和非 PCS 组差异明显的变量
-- [ ] 结合现有初步结果重点关注肝胆实验室指标和症状变量
-- [ ] 放置 Figure 1：病例筛选流程或结局分布
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 在 10%、20%、30% 风险阈值下计算临床指标
+- [x] 报告每 100 名患者中真阳性、假阳性和漏诊数
+- [ ] 报告 number needed to follow-up 或类似临床解释指标
+- [x] 与 DCA 结果结合解释推荐阈值范围
+- [x] 输出：`output/manuscript_experiments/tables/clinical_threshold_table.csv`
 
-### 2.12 Results - Univariate and Multivariable Analysis
+### 3.4 校准增强
 
-- [ ] 报告单因素 Logistic 回归结果
-- [ ] 报告多因素 Logistic 回归结果
-- [ ] 形成 Table 2：危险因素分析
-- [ ] 说明哪些变量是独立危险因素
-- [ ] 区分统计学显著性和临床意义
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 比较原始 Random Forest 概率
+- [x] 比较 Platt scaling
+- [x] 比较 isotonic calibration
+- [x] 报告 Brier score、calibration intercept、calibration slope
+- [x] 绘制校准曲线对比图并插入 LaTeX PDF
+- [x] 在 PDF 中说明 Platt scaling 当前 Brier score 最低
 
-### 2.13 Results - Model Performance
+### 3.5 SHAP 稳定性
 
-- [x] 形成 Table 3：不同模型性能比较
-- [x] 报告最佳模型及其 AUC、敏感度、特异度、F1-score、Brier score
-- [x] 放置 Figure 2：ROC 曲线
-- [x] 放置 Figure 3：校准曲线
-- [x] 放置 Figure 4：DCA 曲线
-- [x] 说明模型在 PCS 阳性识别中的表现，避免只强调 accuracy
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 在交叉验证折内计算 SHAP 排名
+- [x] 报告 top 10 特征排名稳定性
+- [x] 输出：`output/manuscript_experiments/tables/shap_stability.csv`
+- [ ] 绘制 SHAP 排名稳定性图
 
-### 2.14 Results - SHAP Interpretation
+### 3.6 敏感性分析
 
-- [x] 形成 Figure 5：SHAP summary plot
-- [x] 形成 Figure 6：SHAP feature importance
-- [x] 描述对模型贡献最大的变量
-- [x] 解释关键变量对 PCS 风险的方向性影响
-- [x] 用一例高风险个体解释模型如何形成预测结果
-- [ ] 将 SHAP 结果与传统统计结果进行对照
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 对实验室极端值进行 winsorization 后重新建模
+- [x] 比较 median imputation 与 mean imputation
+- [x] 比较 class_weight 与无 class_weight 建模
+- [ ] 如样本允许，比较 SMOTE 或欠采样策略
+- [x] 报告主模型结论是否稳定
 
-### 2.15 Results - Risk Stratification
+### 3.7 亚组性能
 
-- [ ] 报告低、中、高风险组人数和实际 PCS 发生率
-- [ ] 形成 Table 4：风险分层结果
-- [ ] 形成 Figure 7：风险分层可视化
-- [ ] 说明风险分层对术后随访强度和健康宣教的潜在指导意义
+- [x] 新增统一脚本：`scripts/run_manuscript_experiments.py`
+- [x] 按性别报告模型性能
+- [x] 按年龄组报告模型性能
+- [x] 按是否腹痛报告模型性能
+- [x] 按 GGT 中位数分层报告模型性能
+- [x] 报告各亚组样本量，避免过度解释小样本亚组
 
-### 2.16 Results - PCS Symptom Category Prediction
+### 3.8 PCS 发生时间分析
 
-- [x] 报告原始 PCS 症状文本分布
-- [x] 报告症状标签映射和合并类别
-- [x] 构建 PCS 阳性人群内症状亚型多分类预测任务
-- [x] 形成补充模型性能表
-- [x] 形成症状类别分布图、混淆矩阵和 one-vs-rest ROC 曲线
-- [ ] 将该任务明确表述为探索性补充分析
+- [ ] 确认 `PCS发生时间` 的单位和可靠性
+- [ ] 如果时间可靠，补充 Kaplan-Meier 或 Cox 回归探索
+- [x] 探索高风险组是否更早发生 PCS
+- [ ] 当前不建议作为主模型任务，除非随访时间窗完整
 
-### 2.17 Results - Latent Phenotype Exploration
+## 4. P2：论文写作与投稿包装
 
-- [x] 形成 PCA / t-SNE 降维可视化（UMAP 可选，当前未安装）
-- [x] 形成 PCS 阳性患者内按症状亚型着色的降维图
-- [x] 形成聚类热图和 cluster 特征概览
-- [x] 报告不同 cluster 的 PCS 发生率
-- [x] 报告不同 cluster 的症状亚型分布和 PCS 发生时间差异
-- [x] 判断症状亚型是否在术前变量空间中存在可分离趋势
-- [x] 将结果明确表述为探索性发现
+### 4.1 主文结构
 
-### 2.18 Discussion
+- [ ] Title：确定中英文题目
+- [ ] Abstract：写入样本量、PCS 发生率、最佳模型指标、SHAP 发现
+- [ ] Introduction：突出 PCS 术前风险识别缺口
+- [ ] Methods：补齐研究设计、结局定义、预测变量、预处理、统计分析、机器学习、SHAP、风险分层
+- [ ] Results：按基线特征、Logistic、模型性能、SHAP、风险分层、补充探索组织
+- [ ] Discussion：解释肝胆实验室指标、症状负担、模型临床价值和局限性
+- [ ] Conclusion：强调内部验证模型和未来外部验证需求
 
-- [ ] 总结主要发现：PCS 发生率、关键危险因素、最佳模型表现、SHAP 解释和风险分层
-- [ ] 与既往 PCS 发生率和危险因素研究比较
-- [ ] 讨论肝胆实验室指标升高与 PCS 风险的可能机制
-- [ ] 讨论症状持续时间、疼痛频率、腹痛等临床表现与 PCS 的关系
-- [ ] 讨论机器学习模型相较传统 Logistic 回归的优势和局限
-- [ ] 讨论 SHAP 对临床理解和模型信任的价值
-- [ ] 讨论风险分层在个体化随访中的潜在应用
-- [ ] 讨论 PCS 症状类别预测任务的探索性价值和类别不平衡问题
-- [ ] 讨论无监督表型分析对解释症状亚型预测困难和潜在病症强度分层的价值
-- [ ] 强调本研究仍属于内部验证，不能直接替代临床判断
+### 4.2 图表清单
 
-### 2.19 Limitations
-
-- [ ] 单中心或单数据来源导致外部推广性有限
-- [ ] 样本量较小，PCS 阳性仅 70 例，复杂模型可能存在过拟合风险
-- [ ] 回顾性研究存在选择偏倚和信息偏倚
-- [ ] PCS 诊断和随访时间窗可能存在异质性
-- [ ] 缺少外部验证队列
-- [ ] 部分潜在影响因素尚未纳入，例如手术方式、术中情况、术后用药、并发症、心理因素量表等
-- [ ] PCS 症状类别预测任务中各亚型样本量较小，模型结果仅适合作为探索性发现
-- [ ] 聚类和降维分析不提供因果证据，只能作为假设生成结果
-- [ ] 模型尚未进行前瞻性临床验证
-
-### 2.20 Conclusion
-
-- [ ] 用 2-4 句话总结研究发现
-- [ ] 强调模型可用于识别 PCS 高风险患者
-- [ ] 强调 SHAP 提供关键变量解释
-- [ ] 强调未来需多中心外部验证和前瞻性评估
-
-### 2.21 References
-
-- [ ] 系统检索 PCS 定义、发生率、症状谱和危险因素文献
-- [ ] 系统检索胆囊切除术后并发症机器学习预测模型文献
-- [ ] 引用 SHAP 原始论文和 TreeSHAP 论文
-- [ ] 引用 TRIPOD/TRIPOD+AI 报告规范
-- [ ] 引用 PROBAST/PROBAST+AI 风险偏倚评价工具
-- [ ] 优先补充近 5 年系统综述、指南、队列研究和医学 AI 预测模型研究
-- [ ] 按目标期刊格式统一参考文献
-
-### 2.22 Tables and Figures
-
-- [ ] Table 1：PCS 组与非 PCS 组基线特征
-- [ ] Table 2：单因素和多因素 Logistic 回归
-- [x] Table 3：模型性能比较
-- [ ] Table 4：风险分层结果
-- [ ] Supplementary Table 1：变量定义和数据字典
-- [ ] Supplementary Table 2：模型超参数
-- [x] Supplementary Table 3：PCS 症状标签映射与症状类别预测性能
-- [ ] Figure 1：研究流程图或病例筛选流程图
+- [ ] Figure 1：病例筛选流程图或研究流程图
 - [x] Figure 2：ROC 曲线
 - [x] Figure 3：校准曲线
 - [x] Figure 4：DCA 曲线
 - [x] Figure 5：SHAP summary plot
 - [x] Figure 6：SHAP feature importance
-- [ ] Figure 7：风险分层图
-- [x] Supplementary Figure：PCS 症状类别分布、混淆矩阵和 one-vs-rest ROC 曲线
-- [x] Supplementary Figure：PCA / t-SNE 降维图（UMAP 可选，当前未安装）
+- [ ] Figure 7：风险分层可视化
+- [ ] Table 1：基线特征
+- [ ] Table 2：单因素和多因素 Logistic 回归
+- [x] Table 3：模型性能比较
+- [ ] Table 4：风险分层结果
+- [x] Supplementary Figure：症状类别分布、混淆矩阵、one-vs-rest ROC
+- [x] Supplementary Figure：PCA / t-SNE 降维图
 - [x] Supplementary Figure：潜在表型聚类热图
+- [ ] Supplementary Table：变量定义、单位和缺失比例
+- [ ] Supplementary Table：模型超参数
+- [x] Supplementary Table：症状标签映射与症状类别预测性能
 - [x] Supplementary Table：cluster 的 PCS 发生率、症状亚型分布和发生时间统计
-- [x] 所有正式图件在 LaTeX 中使用 PDF 格式插入
 
-## 3. 投稿前质量控制清单
+### 4.3 文献与规范
 
-- [ ] 所有图表编号与正文引用一致
-- [ ] 所有表格小数位统一
-- [ ] 所有 P 值格式统一，例如 `<0.001` 或三位小数
-- [ ] OR、95% CI、AUC、敏感度和特异度均有置信区间时优先报告
-- [ ] 明确统计软件、Python 包和版本
-- [ ] 明确伦理审批和数据隐私处理
-- [ ] 按 TRIPOD/TRIPOD+AI 检查报告完整性
-- [ ] 检查是否存在数据泄漏或把结局后变量纳入预测模型的问题
-- [ ] 检查图像分辨率是否满足期刊要求，通常建议 300 dpi 以上
-- [ ] 检查英文摘要、关键词和缩写表
+- [ ] 系统检索 PCS 定义、发生率、症状谱和危险因素文献
+- [ ] 系统检索胆囊切除术后并发症机器学习预测文献
+- [ ] 引用 SHAP 原始论文
+- [ ] 引用 TreeSHAP 论文
+- [ ] 引用 TRIPOD 和 TRIPOD+AI
+- [ ] 引用 PROBAST 或 PROBAST+AI
+- [ ] 根据目标期刊格式统一参考文献
 - [ ] 准备 cover letter
 - [ ] 准备 highlights 或 graphical abstract，如目标期刊要求
 
-## 4. 建议优先级
+### 4.4 图件与排版
 
-### P0：必须先完成
+- [x] 主要图件已保存为 PDF
+- [x] LaTeX demo 已使用 PDF 图件
+- [ ] 检查所有图件分辨率是否满足 300 dpi 或期刊要求
+- [ ] 统一图注，注明 OOF predictions、final fitted model、exploratory analysis 等来源
+- [ ] 统一表格小数位
+- [ ] 统一 P 值格式，例如 `<0.001` 或三位小数
+- [ ] 检查图表编号和正文引用一致
 
-- [ ] 确认 PCS 诊断标准和随访时间窗
-- [ ] 确认纳入排除标准和伦理信息
-- [ ] 完成正式基线表
-- [ ] 完成 Logistic 回归
-- [ ] 完成机器学习模型评估
+## 5. P3：工程复现与项目整理
 
-### P1：决定论文质量
+- [x] `scripts/build_dataset_artifacts.py`
+- [x] `scripts/plot_pcs_associations.py`
+- [x] `scripts/train_ml_models.py`
+- [x] `scripts/explain_best_model_shap.py`
+- [x] `scripts/build_pcs_symptom_task.py`
+- [x] `scripts/explore_latent_phenotypes.py`
+- [x] `scripts/export_figures_to_pdf.py`
+- [x] `scripts/run_manuscript_experiments.py`
+- [ ] 拆分可选脚本：`scripts/build_baseline_table.py`
+- [ ] 拆分可选脚本：`scripts/run_logistic_regression.py`
+- [ ] 拆分可选脚本：`scripts/risk_stratification.py`
+- [ ] 拆分可选脚本：`scripts/bootstrap_internal_validation.py`
+- [ ] 拆分可选脚本：`scripts/run_feature_ablation.py`
+- [ ] 拆分可选脚本：`scripts/clinical_threshold_table.py`
+- [ ] 拆分可选脚本：`scripts/calibration_comparison.py`
+- [ ] 拆分可选脚本：`scripts/shap_stability.py`
+- [ ] 拆分可选脚本：`scripts/sensitivity_analyses.py`
+- [ ] 拆分可选脚本：`scripts/subgroup_performance.py`
+- [ ] 增加一键运行脚本，例如 `scripts/run_all.py` 或 `Makefile`
+- [ ] 保存依赖版本：`requirements.txt`
+- [ ] 输出最终项目运行说明
 
-- [x] 完成校准曲线和 DCA
-- [x] 完成 SHAP 解释
-- [ ] 完成风险分层
-- [ ] 按 TRIPOD/TRIPOD+AI 补齐方法学描述
+## 6. 建议执行顺序
 
-### P2：投稿包装
+1. 明确 PCS 诊断标准、纳入排除标准、伦理信息和病例筛选流程。
+2. 将已完成的 Table 1、Logistic、风险分层、bootstrap、消融、阈值表、校准增强、SHAP 稳定性、敏感性和亚组结果写入 Results。
+3. 将 SHAP 与 Logistic 结果对照写入 Discussion。
+4. 把症状亚型和潜在表型放入 Supplementary / Exploratory sections。
+5. 根据目标期刊精简 LaTeX 展示版，转换为正式投稿结构。
+6. 按 TRIPOD+AI 检查全文。
+7. 补充外部验证或前瞻性验证计划描述。
 
-- [ ] 统一图表风格
-- [ ] 补充近 5 年文献
-- [ ] 精修 Discussion 和 Limitations
-- [ ] 按目标期刊格式排版
+## 7. 最终投稿前检查
+
+- [ ] 研究设计、数据来源和伦理信息完整
+- [ ] PCS 结局定义清楚
+- [ ] 没有将结局后变量纳入预测模型
+- [ ] 缺失值和异常值处理说明清楚
+- [ ] 基线表和 Logistic 回归完整
+- [ ] 模型性能不仅报告 AUC，也报告校准和 DCA
+- [ ] 风险分层具有临床解释
+- [ ] SHAP 解释不过度表述为因果关系
+- [ ] 症状亚型和聚类明确标注为探索性分析
+- [ ] 局限性包含小样本、单中心、回顾性、缺少外部验证
+- [ ] 未来工作包含多中心外部验证和前瞻性临床评估

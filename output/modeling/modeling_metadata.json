@@ -14,6 +14,10 @@
     "Gradient Boosting",
     "SVM",
     "Gaussian NB",
-    "XGBoost"
+    "XGBoost",
+    "Soft Voting Ensemble",
+    "Hard Voting Ensemble",
+    "Stacking Ensemble",
+    "Weighted Soft Voting Ensemble"
   ]
 }

@@ -17,15 +17,17 @@
   urlcolor=blue
 }
 
-\title{\textbf{Explainable Machine-Learning Pipeline for Post-Cholecystectomy Syndrome Risk Prediction: A Demonstration Report}}
+\title{\textbf{Explainable Machine-Learning Pipeline for Post-Cholecystectomy Syndrome Risk Prediction: Expanded Manuscript Experiment Report}}
 \author{PCS Study Group}
 \date{\today}
+
+\input{tables.tex}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-This demo report summarizes an end-to-end analytical workflow for predicting post-cholecystectomy syndrome (PCS) using structured clinical data. It is designed as a compact visual overview of the current project outputs rather than a complete journal manuscript.
+This expanded report summarizes the current manuscript-oriented experimental package for predicting post-cholecystectomy syndrome (PCS) using structured clinical data. In addition to the original cross-validated machine-learning evaluation and SHAP interpretation, the report now includes conventional clinical statistics, univariate and multivariable logistic regression, risk stratification, bootstrap internal validation, feature-domain ablation, clinical threshold decision tables, calibration comparison, SHAP stability, sensitivity analyses, subgroup performance, and exploratory PCS onset analysis.
 \end{abstract}
 
 \section{Background}
@@ -40,9 +42,41 @@ The dataset included 311 patients. The binary outcome was PCS occurrence, with 7
 
 Numeric variables were imputed using the median and standardized. Categorical variables were imputed using the most frequent category and one-hot encoded. Models were evaluated using stratified five-fold cross-validation. Out-of-fold predictions were used for receiver operating characteristic (ROC) curves, calibration curves, decision curve analysis, and summary metrics.
 
+\section{Clinical Baseline and Conventional Statistics}
+
+Table~\ref{tab:baseline_condensed} provides a condensed version of the formal baseline comparison. The complete table was exported to \texttt{output/manuscript\_experiments/tables/baseline\_table.csv} and \texttt{manuscript\_experiment\_results.xlsx}. Continuous variables are summarized as median (interquartile range), and categorical variables are summarized as counts and percentages. The strongest group differences were concentrated in hepatobiliary laboratory markers and symptom-related variables.
+
+\begin{table}[H]
+\centering
+\caption{Condensed baseline comparison between PCS and non-PCS groups.}
+\label{tab:baseline_condensed}
+\scriptsize
+\resizebox{\textwidth}{!}{\TableBaselineCondensed}
+\end{table}
+
+\section{Logistic Regression and Clinical Statistical Backbone}
+
+To complement the machine-learning models with conventional clinical inference, univariate and multivariable logistic regression analyses were performed. The univariate analysis screened candidate associations, while the multivariable model used a reduced clinically interpretable predictor set with variance inflation factor checks to limit collinearity. Results support the same broad signal seen in SHAP: hepatobiliary laboratory abnormalities, especially GGT and CA19-9, were strongly associated with PCS occurrence.
+
+\begin{table}[H]
+\centering
+\caption{Top univariate logistic regression results.}
+\label{tab:univariate_logistic}
+\scriptsize
+\resizebox{\textwidth}{!}{\TableUnivariateTop}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Multivariable logistic regression after collinearity-aware predictor reduction.}
+\label{tab:multivariable_logistic}
+\small
+\TableMultivariable
+\end{table}
+
 \section{Model Development and Evaluation}
 
-We compared logistic regression, random forest, gradient boosting, support vector machine, Gaussian naive Bayes, and XGBoost models. Table~\ref{tab:model_performance} summarizes the current cross-validated performance. Random forest achieved the highest out-of-fold area under the ROC curve (AUC).
+We compared logistic regression, random forest, gradient boosting, support vector machine, Gaussian naive Bayes, XGBoost, and three ensemble architectures. Table~\ref{tab:model_performance} summarizes the current cross-validated performance. Random forest achieved the highest out-of-fold area under the ROC curve (AUC).
 
 \begin{table}[H]
 \centering
@@ -53,19 +87,26 @@ We compared logistic regression, random forest, gradient boosting, support vecto
 \toprule
 Model & OOF AUC & OOF AP & Brier & Sensitivity & Specificity & F1 \\
 \midrule
+\multicolumn{7}{l}{\textit{Base models}} \\
 Random Forest & 0.917 & 0.842 & 0.088 & 0.714 & 0.946 & 0.747 \\
 Gradient Boosting & 0.895 & 0.827 & 0.081 & 0.729 & 0.950 & 0.768 \\
 XGBoost & 0.889 & 0.799 & 0.091 & 0.757 & 0.930 & 0.756 \\
 SVM & 0.856 & 0.799 & 0.089 & 0.657 & 0.967 & 0.741 \\
 Gaussian NB & 0.853 & 0.716 & 0.459 & 0.900 & 0.398 & 0.462 \\
 Logistic Regression & 0.849 & 0.817 & 0.110 & 0.743 & 0.900 & 0.713 \\
+\midrule
+\multicolumn{7}{l}{\textit{Ensemble models}} \\
+Weighted Soft Voting Ensemble & 0.915 & 0.852 & 0.083 & 0.729 & 0.950 & 0.763 \\
+Stacking Ensemble & 0.904 & 0.840 & 0.106 & 0.786 & 0.913 & 0.752 \\
+Soft Voting Ensemble & 0.897 & 0.842 & 0.080 & 0.714 & 0.950 & 0.758 \\
+Hard Voting Ensemble & 0.877 & 0.750 & 0.086 & 0.729 & 0.954 & 0.773 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.78\linewidth]{figures/fig2_roc_curve.pdf}
+\includegraphics[width=0.78\linewidth]{figures/pdf/fig2_roc_curve.pdf}
 \caption{Cross-validated ROC curves based on out-of-fold predictions.}
 \label{fig:roc}
 \end{figure}
@@ -74,17 +115,100 @@ Logistic Regression & 0.849 & 0.817 & 0.110 & 0.743 & 0.900 & 0.713 \\
 \centering
 \begin{subfigure}{0.48\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/fig3_calibration_curve.pdf}
+  \includegraphics[width=\linewidth]{figures/pdf/fig3_calibration_curve.pdf}
   \caption{Calibration curves}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/fig4_dca_curve.pdf}
+  \includegraphics[width=\linewidth]{figures/pdf/fig4_dca_curve.pdf}
   \caption{Decision curve analysis}
 \end{subfigure}
 \caption{Clinical model assessment beyond discrimination.}
 \label{fig:calibration_dca}
+\end{figure}
+
+\section{Ensemble Architecture Validation}
+
+To test whether a multi-classifier architecture improved performance, we evaluated soft voting, hard voting, stacking, and an optimized weighted soft-voting ensemble using the same out-of-fold validation protocol. Weighted soft voting selected model weights inside each outer training fold using inner cross-validation. The learned weights consistently favored Random Forest, with smaller contributions from the other base models. The weighted ensemble approached but did not exceed the best single Random Forest model in discrimination (OOF AUC 0.915 vs. 0.917), while improving average precision and Brier score. Thus, ensemble learning did not replace the best single model in this dataset, but weighted soft voting provided a useful architecture check when calibrated risk probabilities are prioritized.
+
+\section{Risk Stratification and Clinical Thresholds}
+
+Random Forest out-of-fold probabilities were converted into clinically interpretable low-, intermediate-, and high-risk groups. The high-risk group captured most PCS-positive patients and had a markedly higher observed PCS rate than the low- and intermediate-risk groups. This analysis translates the model from discrimination metrics into a candidate follow-up allocation tool.
+
+\begin{table}[H]
+\centering
+\caption{Observed PCS rate by model-defined risk strata.}
+\label{tab:risk_stratification}
+\small
+\TableRiskStratification
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\linewidth]{figures/pdf/risk_stratification_bar.pdf}
+\caption{Observed PCS rate and mean predicted risk across low-, intermediate-, and high-risk strata.}
+\label{fig:risk_stratification}
+\end{figure}
+
+Clinical threshold analysis was performed at 10\%, 20\%, and 30\% predicted PCS risk. At the 30\% threshold, the model identified 60 of 70 PCS cases while reducing false positives compared with lower thresholds.
+
+\begin{table}[H]
+\centering
+\caption{Clinical threshold decision table based on out-of-fold predicted probabilities.}
+\label{tab:clinical_thresholds}
+\scriptsize
+\resizebox{\textwidth}{!}{\TableClinicalThresholds}
+\end{table}
+
+\section{Bootstrap Internal Validation}
+
+To address overfitting concerns in a dataset with 70 PCS-positive cases, bootstrap internal validation was performed with 500 resamples. The optimism-corrected AUC remained high, supporting the stability of the discrimination signal, while calibration slope results indicate that probability calibration still requires caution and external validation.
+
+\begin{table}[H]
+\centering
+\caption{Bootstrap internal validation of the Random Forest model.}
+\label{tab:bootstrap_validation}
+\scriptsize
+\resizebox{\textwidth}{!}{\TableBootstrapValidation}
+\end{table}
+
+\section{Feature-Domain Ablation}
+
+Feature-domain ablation was used to test whether multi-source clinical data improved predictive performance beyond any single feature domain. Laboratory-only and symptoms-plus-laboratory models performed strongly, indicating that hepatobiliary laboratory markers carried the dominant signal in this cohort. The all-variable model remained clinically attractive because it preserves broader context and interpretability, but these results make clear that laboratory features are central to PCS prediction.
+
+\begin{table}[H]
+\centering
+\caption{Feature-domain ablation experiment.}
+\label{tab:feature_ablation}
+\small
+\resizebox{\textwidth}{!}{\TableFeatureAblation}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.72\linewidth]{figures/pdf/feature_ablation_auc.pdf}
+\caption{AUC comparison across feature-domain ablation models.}
+\label{fig:feature_ablation}
+\end{figure}
+
+\section{Calibration Enhancement}
+
+Because clinical prediction models require usable probabilities rather than discrimination alone, raw Random Forest probabilities were compared with Platt scaling and isotonic calibration. Platt scaling achieved the lowest Brier score and a calibration slope closer to 1 in the current internal validation.
+
+\begin{table}[H]
+\centering
+\caption{Calibration method comparison.}
+\label{tab:calibration_comparison}
+\small
+\TableCalibrationComparison
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.68\linewidth]{figures/pdf/calibration_method_comparison.pdf}
+\caption{Calibration curves for raw Random Forest, Platt scaling, and isotonic calibration.}
+\label{fig:calibration_methods}
 \end{figure}
 
 \section{SHAP-Based Interpretation}
@@ -93,17 +217,61 @@ Random forest was selected for SHAP analysis because it achieved the best out-of
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\linewidth]{figures/fig5_shap_summary.pdf}
+\includegraphics[width=0.85\linewidth]{figures/pdf/fig5_shap_summary.pdf}
 \caption{SHAP summary plot for the final random forest model.}
 \label{fig:shap_summary}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.75\linewidth]{figures/fig6_shap_variable_importance.pdf}
+\includegraphics[width=0.75\linewidth]{figures/pdf/fig6_shap_variable_importance.pdf}
 \caption{Aggregated SHAP importance by original clinical variable.}
 \label{fig:shap_importance}
 \end{figure}
+
+\section{SHAP Stability}
+
+To test whether the explanatory pattern was fold-specific, SHAP rankings were recalculated across cross-validation folds. GGT, ALT, ALP, AST, CA19-9, total bilirubin, symptom duration, and total bile acid appeared in the top 10 features in all folds, supporting the robustness of the model explanation.
+
+\begin{table}[H]
+\centering
+\caption{Cross-fold SHAP top-10 stability.}
+\label{tab:shap_stability}
+\small
+\TableShapStability
+\end{table}
+
+\section{Sensitivity and Subgroup Analyses}
+
+Sensitivity analyses assessed whether the main model signal persisted under altered preprocessing and class-weight assumptions. The model remained stable after numeric winsorization and mean imputation; removing class weighting increased specificity but reduced sensitivity. Subgroup analyses showed generally consistent discrimination across sex, age, and abdominal-pain strata, although small subgroups require cautious interpretation.
+
+\begin{table}[H]
+\centering
+\caption{Sensitivity analyses for preprocessing and class weighting.}
+\label{tab:sensitivity}
+\small
+\resizebox{\textwidth}{!}{\TableSensitivity}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Subgroup performance using Random Forest out-of-fold predictions.}
+\label{tab:subgroup}
+\scriptsize
+\resizebox{\textwidth}{!}{\TableSubgroupPerformance}
+\end{table}
+
+\section{Exploratory PCS Onset Analysis}
+
+PCS onset time was not used as a predictor. As an exploratory descriptive analysis among PCS-positive patients with available onset records, high-risk patients had a shorter median onset time than lower-risk groups. However, the Spearman correlation between predicted risk and onset days was weak, and this analysis cannot be interpreted as a formal time-to-event model because censoring and follow-up windows are not fully specified.
+
+\begin{table}[H]
+\centering
+\caption{Exploratory PCS onset summary by predicted risk group.}
+\label{tab:onset}
+\small
+\resizebox{\textwidth}{!}{\TableOnsetExploration}
+\end{table}
 
 \section{Exploratory PCS Symptom-Category Task}
 
@@ -149,13 +317,13 @@ SVM & 0.246 & 0.225 & 0.197 & 0.445 \\
 \centering
 \begin{subfigure}{0.48\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/figS2_symptom_confusion_matrix.pdf}
+  \includegraphics[width=\linewidth]{figures/pdf/figS2_symptom_confusion_matrix.pdf}
   \caption{Confusion matrix}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/figS3_symptom_ovr_roc.pdf}
+  \includegraphics[width=\linewidth]{figures/pdf/figS3_symptom_ovr_roc.pdf}
   \caption{One-vs-rest ROC}
 \end{subfigure}
 \caption{Exploratory downstream PCS symptom-subtype prediction results. Balanced accuracy is calculated only across PCS symptom subtypes and excludes \texttt{no\_pcs}.}
@@ -185,13 +353,13 @@ Cluster & N & PCS cases & PCS rate & Median PCS onset, days \\
 \centering
 \begin{subfigure}{0.48\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/figS4_pca_by_pcs.pdf}
+  \includegraphics[width=\linewidth]{figures/pdf/figS4_pca_by_pcs.pdf}
   \caption{PCA by PCS status}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/figS4_tsne_by_pcs.pdf}
+  \includegraphics[width=\linewidth]{figures/pdf/figS4_tsne_by_pcs.pdf}
   \caption{t-SNE by PCS status}
 \end{subfigure}
 \caption{Exploratory dimensionality reduction using preoperative variables.}
@@ -202,13 +370,13 @@ Cluster & N & PCS cases & PCS rate & Median PCS onset, days \\
 \centering
 \begin{subfigure}{0.48\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/figS4_tsne_pcs_positive_by_symptom.pdf}
+  \includegraphics[width=\linewidth]{figures/pdf/figS4_tsne_pcs_positive_by_symptom.pdf}
   \caption{PCS-positive patients by symptom subtype}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\linewidth}
   \centering
-  \includegraphics[width=\linewidth]{figures/figS5_cluster_heatmap.pdf}
+  \includegraphics[width=\linewidth]{figures/pdf/figS5_cluster_heatmap.pdf}
   \caption{Cluster feature profile}
 \end{subfigure}
 \caption{Exploratory latent phenotype structure.}
@@ -217,17 +385,17 @@ Cluster & N & PCS cases & PCS rate & Median PCS onset, days \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.72\linewidth]{figures/figS7_cluster_symptom_distribution.pdf}
+\includegraphics[width=0.72\linewidth]{figures/pdf/figS7_cluster_symptom_distribution.pdf}
 \caption{PCS symptom subtype distribution by latent cluster. Cluster-level PCS rates are reported in Table~\ref{tab:cluster_summary}.}
 \label{fig:latent_cluster_outcomes}
 \end{figure}
 
 \section{Current Interpretation}
 
-The current results suggest that machine-learning models can provide strong internal discrimination for PCS occurrence, with random forest achieving the best out-of-fold AUC. SHAP analysis indicated that laboratory markers of hepatobiliary disturbance contributed most prominently to model predictions. The symptom-category task provides an initial framework for modeling PCS heterogeneity, but the class sizes are limited and the results should be interpreted as exploratory.
+The expanded results suggest that machine-learning models can provide strong internal discrimination for PCS occurrence, with random forest achieving the best out-of-fold AUC among the original model set. Conventional logistic regression, feature ablation, and SHAP analyses consistently point to hepatobiliary laboratory markers as the main prediction signal. Risk stratification and threshold tables make the model more clinically interpretable by showing how predicted probabilities could inform follow-up intensity. The symptom-category and latent phenotype tasks provide an initial framework for modeling PCS heterogeneity, but their class sizes and exploratory design require cautious interpretation.
 
 \section{Limitations}
 
-This demo uses internal cross-validation only. External validation, prospective assessment, formal hyperparameter tuning, complete baseline regression analysis, and clinically defined risk thresholds remain necessary before clinical deployment.
+This report uses internal validation only. Although bootstrap validation, sensitivity analyses, calibration comparison, and feature ablation improve the evidence base, external validation and prospective assessment remain necessary before clinical deployment. The cohort is small, PCS-positive cases are limited, and the study lacks a fully specified censoring framework for formal survival analysis. Symptom subtype prediction and latent phenotype analysis should be treated as exploratory.
 
 \end{document}
