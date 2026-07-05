@@ -33,6 +33,12 @@
       predict: "计算风险",
       rangeHint: "参考范围",
       selectHint: "请选择最接近的分类",
+      reportTitle: "高风险变量提示",
+      reportEmpty: "当前输入未触发明显的高风险变量提示。",
+      reportNote: "依据全局 SHAP 方向和当前输入生成，仅用于解释模型风险信号。",
+      higherThanMedian: "高于训练集中位参考值",
+      lowerThanMedian: "低于训练集中位参考值",
+      selectedCategory: "当前选择",
     },
     en: {
       pageTitle: "PCS Risk Prediction",
@@ -55,6 +61,12 @@
       predict: "Calculate risk",
       rangeHint: "Reference range",
       selectHint: "Select the closest category",
+      reportTitle: "High-risk variable signals",
+      reportEmpty: "No prominent high-risk variable signal is triggered by the current inputs.",
+      reportNote: "Generated from global SHAP direction and current inputs; for model interpretation only.",
+      higherThanMedian: "above the training median reference",
+      lowerThanMedian: "below the training median reference",
+      selectedCategory: "selected category",
     },
   };
 
