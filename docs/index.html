@@ -9,15 +9,21 @@
   <body>
     <main class="shell">
       <section class="panel result-panel" aria-labelledby="title">
-        <div>
-          <p class="eyebrow">Post-cholecystectomy syndrome</p>
-          <h1 id="title">PCS 风险预测</h1>
-          <p class="subtitle">基于本项目随机森林模型的浏览器本地计算版本。</p>
+        <div class="title-row">
+          <div>
+            <p class="eyebrow">Post-cholecystectomy syndrome</p>
+            <h1 id="title">PCS 风险预测</h1>
+            <p class="subtitle" id="subtitle">基于本项目随机森林模型的浏览器本地计算版本。</p>
+          </div>
+          <div class="language-toggle" role="group" aria-label="Language">
+            <button class="lang-button active" id="langZh" type="button" data-lang="zh">中</button>
+            <button class="lang-button" id="langEn" type="button" data-lang="en">EN</button>
+          </div>
         </div>
 
         <div class="risk-card">
           <div class="risk-topline">
-            <span>预测概率</span>
+            <span id="riskLabel">预测概率</span>
             <strong id="riskValue">--</strong>
           </div>
           <div class="meter" aria-hidden="true">
@@ -26,27 +32,35 @@
           <div class="risk-band" id="riskBand">请填写变量后计算</div>
         </div>
 
-        <div class="metrics">
-          <div>
-            <span>模型</span>
-            <strong>Random Forest</strong>
+        <details class="model-details" id="modelDetails">
+          <summary id="modelDetailsSummary">模型信息</summary>
+          <div class="metrics">
+            <div>
+              <span id="metricModelLabel">模型</span>
+              <strong>Random Forest</strong>
+            </div>
+            <div>
+              <span id="metricAucLabel">内部验证 AUC</span>
+              <strong>0.917</strong>
+            </div>
+            <div>
+              <span id="metricSampleLabel">样本量</span>
+              <strong>311</strong>
+            </div>
           </div>
-          <div>
-            <span>内部验证 AUC</span>
-            <strong>0.917</strong>
-          </div>
-          <div>
-            <span>样本量</span>
-            <strong>311</strong>
-          </div>
-        </div>
-
-        <p class="notice">仅用于科研展示和内部验证，不能替代临床诊断或治疗决策。正式应用前仍需外部验证、校准和伦理/隐私审查。</p>
+          <p class="notice" id="noticeText">仅用于科研展示和内部验证，不能替代临床诊断或治疗决策。正式应用前仍需外部验证、校准和伦理/隐私审查。</p>
+        </details>
       </section>
 
       <section class="panel form-panel">
         <div class="toolbar">
-          <select class="sample-select" id="sampleSelect" aria-label="内置样本"></select>
+          <div class="sample-picker">
+            <label class="sample-caption" for="sampleSelect" id="sampleCaption">内置样本</label>
+            <div class="sample-control">
+              <select class="sample-select" id="sampleSelect" aria-label="内置样本"></select>
+              <span class="current-sample" id="currentSample">自定义输入</span>
+            </div>
+          </div>
           <button class="button secondary" id="resetForm" type="button">重置</button>
           <button class="button primary" id="predict" type="button">计算风险</button>
         </div>
