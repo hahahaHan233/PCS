@@ -129,6 +129,47 @@
     { id: "high", label: { zh: "高风险样本", en: "High-risk profile" }, values: { age: 70, sex: "male", occupation: "unemployed", height_cm: 166, weight_kg: 58, bmi: 21, education_level: "junior_high_or_below", smoking: 1, alcohol_use: 1, symptom_duration: "very_short", abdominal_pain: 1, pain_frequency: "daily", radiating_pain: 1, meal_related_pain: 1, hypertension: 1, hyperlipidemia: 0, diabetes: 1, anxiety_depression: 0, prior_abdominal_surgery: 1, gallbladder_wall_thickening: 1, max_stone_diameter_mm: 18, stone_number: "multiple", stone_location: "distal_common_bile_duct", common_bile_duct_diameter_mm: 10, fatty_liver: 0, gallbladder_atrophy: 0, alt: 260, ast: 210, alp: 240, ggt: 520, total_bilirubin: 62, total_bile_acid: 110, total_cholesterol: 5.1, triglyceride: 1.7, alpha_fetoprotein: 4.8, ca199: 180 } },
   ];
 
+  const shapImportance = {
+    ggt: 0.08247,
+    alt: 0.07607,
+    ast: 0.04812,
+    alp: 0.04199,
+    ca199: 0.04,
+    total_bilirubin: 0.03401,
+    symptom_duration: 0.02063,
+    total_bile_acid: 0.01946,
+    pain_frequency: 0.01794,
+    age: 0.00755,
+    alpha_fetoprotein: 0.00605,
+    bmi: 0.00588,
+    occupation: 0.00524,
+    total_cholesterol: 0.00524,
+    max_stone_diameter_mm: 0.00441,
+    weight_kg: 0.00438,
+    triglyceride: 0.00394,
+    common_bile_duct_diameter_mm: 0.0023,
+  };
+
+  const riskRules = [
+    { field: "ggt", direction: "high", variable: "ggt" },
+    { field: "alt", direction: "high", variable: "alt" },
+    { field: "ast", direction: "high", variable: "ast" },
+    { field: "alp", direction: "high", variable: "alp" },
+    { field: "ca199", direction: "high", variable: "ca199" },
+    { field: "total_bilirubin", direction: "high", variable: "total_bilirubin" },
+    { field: "total_bile_acid", direction: "high", variable: "total_bile_acid" },
+    { field: "symptom_duration", direction: "category", value: "very_short", variable: "symptom_duration" },
+    { field: "pain_frequency", direction: "category", value: "daily", variable: "pain_frequency" },
+    { field: "age", direction: "high", variable: "age" },
+    { field: "alpha_fetoprotein", direction: "low", variable: "alpha_fetoprotein" },
+    { field: "bmi", direction: "low", variable: "bmi" },
+    { field: "occupation", direction: "category", value: "unemployed", variable: "occupation" },
+    { field: "total_cholesterol", direction: "low", variable: "total_cholesterol" },
+    { field: "max_stone_diameter_mm", direction: "high", variable: "max_stone_diameter_mm" },
+    { field: "weight_kg", direction: "low", variable: "weight_kg" },
+    { field: "triglyceride", direction: "low", variable: "triglyceride" },
+    { field: "common_bile_duct_diameter_mm", direction: "high", variable: "common_bile_duct_diameter_mm" },
+  ];
   function t(key) {
     return uiText[language][key];
   }
@@ -332,6 +373,65 @@
     return total / model.forest.trees.length;
   }
 
+
+  function fieldByName(name) {
+    return model.fields.find((field) => field.name === name);
+  }
+
+  function categoryDisplay(value) {
+    const key = String(value);
+    return valueLabels[language][key] || key;
+  }
+
+  function buildRiskSignals(input) {
+    const signals = [];
+    for (const rule of riskRules) {
+      const field = fieldByName(rule.field);
+      if (!field) continue;
+      const value = input[rule.field];
+      const importance = shapImportance[rule.variable] || 0;
+      let strength = 0;
+      let reason = "";
+
+      if (rule.direction === "high") {
+        const current = Number(value);
+        const reference = Number(field.default);
+        const max = Number(field.max);
+        if (!Number.isFinite(current) || !Number.isFinite(reference) || current <= reference) continue;
+        strength = ((current - reference) / Math.max(1e-9, max - reference)) * importance;
+        reason = `${formatNumber(current)} ${t("higherThanMedian")} (${formatNumber(reference)})`;
+      } else if (rule.direction === "low") {
+        const current = Number(value);
+        const reference = Number(field.default);
+        const min = Number(field.min);
+        if (!Number.isFinite(current) || !Number.isFinite(reference) || current >= reference) continue;
+        strength = ((reference - current) / Math.max(1e-9, reference - min)) * importance;
+        reason = `${formatNumber(current)} ${t("lowerThanMedian")} (${formatNumber(reference)})`;
+      } else if (rule.direction === "category") {
+        if (String(value) !== String(rule.value)) continue;
+        strength = importance;
+        reason = `${t("selectedCategory")}: ${categoryDisplay(value)}`;
+      }
+
+      if (strength > 0) {
+        signals.push({
+          label: fieldLabel(field),
+          reason,
+          strength,
+          importance,
+        });
+      }
+    }
+    return signals.sort((a, b) => b.strength - a.strength).slice(0, 5);
+  }
+
+  function renderRiskReport(input) {
+    const signals = buildRiskSignals(input);
+    const items = signals.length
+      ? signals.map((signal) => `<li><strong>${signal.label}</strong><span>${signal.reason}</span></li>`).join("")
+      : `<li class="muted-signal">${t("reportEmpty")}</li>`;
+    riskReport.innerHTML = `<div class="report-title">${t("reportTitle")}</div><ul>${items}</ul><p>${t("reportNote")}</p>`;
+  }
   function renderRisk(probability) {
     lastProbability = probability;
     const percent = probability * 100;
@@ -351,7 +451,9 @@
   }
 
   function updateRisk() {
-    renderRisk(predictProbability(readInputs()));
+    const input = readInputs();
+    renderRisk(predictProbability(input));
+    renderRiskReport(input);
   }
 
   function setFormValues(values) {
@@ -408,6 +510,7 @@
     riskBar.style.width = "0";
     riskBar.style.backgroundColor = "var(--green)";
     riskBand.textContent = t("initialRisk");
+    renderRiskReport(defaults);
   }
 
   function setLanguage(nextLanguage) {
@@ -418,12 +521,14 @@
     updateStaticText();
     renderSamples(selectedSample);
     renderForm(values);
+    renderRiskReport(values);
     if (lastProbability !== null) renderRisk(lastProbability);
   }
 
   updateStaticText();
   renderSamples();
   renderForm();
+  renderRiskReport(readInputsOrDefaults());
 
   languageButtons.forEach((button) => button.addEventListener("click", () => setLanguage(button.dataset.lang)));
   sampleSelect.addEventListener("change", () => applySample(sampleSelect.value));

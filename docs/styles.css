@@ -139,6 +139,58 @@ h1 {
   transition: width 180ms ease, background-color 180ms ease;
 }
 
+.risk-report {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.report-title {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.risk-report ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.risk-report li {
+  display: grid;
+  gap: 3px;
+  padding: 9px 10px;
+  border-left: 3px solid var(--amber);
+  border-radius: 6px;
+  background: #fff8ed;
+}
+
+.risk-report li strong {
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.risk-report li span,
+.risk-report p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.risk-report .muted-signal {
+  border-left-color: var(--green);
+  background: #eff8f1;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.risk-report p {
+  margin: 0;
+}
 .risk-band {
   min-height: 26px;
   color: var(--muted);
