@@ -13,6 +13,7 @@ from train_ml_models import DATASET, OUTPUT, RANDOM_STATE, build_models, build_p
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 SCHEMA = ROOT / "output" / "dataset_schema_mapping.csv"
+BASELINE_TABLE = ROOT / "output" / "manuscript_experiments" / "tables" / "baseline_table.csv"
 MODEL_JS = DOCS / "model.js"
 
 
@@ -48,6 +49,30 @@ VALUE_LABELS = {
 }
 
 
+def load_original_labels() -> dict[str, str]:
+    schema = pd.read_csv(SCHEMA)
+    return {
+        row["english_name"]: row["original_name"]
+        for _, row in schema.iterrows()
+        if row.get("included_in_dataset_csv") is True or str(row.get("included_in_dataset_csv")).lower() == "true"
+    }
+
+
+def load_medical_labels() -> dict[str, str]:
+    if not BASELINE_TABLE.exists():
+        return {}
+    baseline = pd.read_csv(BASELINE_TABLE)
+    baseline = baseline.dropna(subset=["variable", "label"])
+    return baseline.drop_duplicates("variable").set_index("variable")["label"].to_dict()
+
+
+def display_label(column: str, original_labels: dict[str, str], medical_labels: dict[str, str]) -> str:
+    original = original_labels.get(column, column)
+    medical = medical_labels.get(column, column)
+    if str(original).strip().lower() == str(medical).strip().lower():
+        return original
+    return f"{original} ({medical})"
+
 def as_jsonable(value: object) -> object:
     if isinstance(value, (np.integer,)):
         return int(value)
@@ -78,12 +103,8 @@ def export_tree(estimator) -> dict[str, object]:
 
 
 def build_field_metadata(df: pd.DataFrame) -> list[dict[str, object]]:
-    schema = pd.read_csv(SCHEMA)
-    labels = {
-        row["english_name"]: row["original_name"]
-        for _, row in schema.iterrows()
-        if row.get("included_in_dataset_csv") is True or str(row.get("included_in_dataset_csv")).lower() == "true"
-    }
+    original_labels = load_original_labels()
+    medical_labels = load_medical_labels()
 
     fields: list[dict[str, object]] = []
     for column in df.drop(columns=["pcs"]).columns:
@@ -98,7 +119,7 @@ def build_field_metadata(df: pd.DataFrame) -> list[dict[str, object]]:
             fields.append(
                 {
                     "name": column,
-                    "label": labels.get(column, column),
+                    "label": display_label(column, original_labels, medical_labels),
                     "kind": "number",
                     "default": as_jsonable(quantiles.loc[0.5]),
                     "min": as_jsonable(quantiles.loc[0.01]),
@@ -113,7 +134,7 @@ def build_field_metadata(df: pd.DataFrame) -> list[dict[str, object]]:
             fields.append(
                 {
                     "name": column,
-                    "label": labels.get(column, column),
+                    "label": display_label(column, original_labels, medical_labels),
                     "kind": "select",
                     "default": as_jsonable(non_null.mode().iloc[0]) if len(non_null) else None,
                     "options": options,
@@ -188,3 +209,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
